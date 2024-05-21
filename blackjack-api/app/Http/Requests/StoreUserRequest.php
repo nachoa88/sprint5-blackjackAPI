@@ -3,10 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\User;
 
-
-class RegisterRequest extends FormRequest
+class StoreUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,13 +22,8 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nickname' => [
-                function ($attribute, $value, $fail) {
-                    if ($value !== 'Anonymous' && User::where('nickname', $value)->exists()) {
-                        $fail('The ' . $attribute . ' has already been taken.');
-                    }
-                },
-            ],
+            'uuid' => 'required|uuid|unique:users',
+            'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
         ];
