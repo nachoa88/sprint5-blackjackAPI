@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -25,9 +26,16 @@ class UserController extends Controller
         //
     }
 
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        //
+    //     $user = new User;
+    //     $user->uuid = Str::uuid();
+    //     $user->name = $request->name;
+    //     $user->email = $request->email;
+    //     $user->password = Hash::make($request->password);
+    //     $user->save();
+    
+    //     return response()->json($user, 201);
     }
 
     public function show(User $user): JsonResponse
@@ -76,15 +84,13 @@ class UserController extends Controller
         $request->validated();
         
         $user = User::create([
-            'name' => $request->name,
+            'uuid' => Str::uuid(),
+            'nickname' => $request->nickname ?? 'Anonymous',
             'email' => $request->email,
             // The same as: 'password' => bcrypt($request->password),
             'password' => Hash::make($request->password),
         ]);
 
-        // $token = $user->createToken('MyApp')->accessToken;
-
-        // return response()->json(['token' => $token], 200);
         return response()->json(['message' => 'User created'], 201);
     }
 }
