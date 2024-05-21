@@ -6,6 +6,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -28,14 +29,14 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
-    //     $user = new User;
-    //     $user->uuid = Str::uuid();
-    //     $user->name = $request->name;
-    //     $user->email = $request->email;
-    //     $user->password = Hash::make($request->password);
-    //     $user->save();
-    
-    //     return response()->json($user, 201);
+        //     $user = new User;
+        //     $user->uuid = Str::uuid();
+        //     $user->name = $request->name;
+        //     $user->email = $request->email;
+        //     $user->password = Hash::make($request->password);
+        //     $user->save();
+
+        //     return response()->json($user, 201);
     }
 
     public function show(User $user): JsonResponse
@@ -82,7 +83,7 @@ class UserController extends Controller
     public function register(RegisterRequest $request)
     {
         $request->validated();
-        
+
         $user = User::create([
             'uuid' => Str::uuid(),
             'nickname' => $request->nickname ?? 'Anonymous',
@@ -90,6 +91,10 @@ class UserController extends Controller
             // The same as: 'password' => bcrypt($request->password),
             'password' => Hash::make($request->password),
         ]);
+
+        // Assign a default role to the user
+        $role = Role::findByName('player');
+        $user->assignRole($role);
 
         return response()->json(['message' => 'User created'], 201);
     }
