@@ -29,6 +29,6 @@ class RegisteredUserController extends Controller
         // This can be solved by changing the default guard in the config/auth.php file and then:
         $user->assignRole('player');
 
-        return response()->json(['message' => 'User created'], 201);
+        return response()->json(['message' => 'User created successfully'], 201);
     }
 }

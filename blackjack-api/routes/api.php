@@ -7,8 +7,6 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 
 // PROTECTED ROUTES
 Route::middleware('auth:api')->group(function () {
-    Route::get('/users', [UserController::class, 'index']);
-    Route::get('/users/{user}', [UserController::class, 'show']);
     // PUT /players/{id} : modifica el nom del jugador/a.
     Route::put('/players/{id}', [UserController::class, 'update']);
     // GET /players: retorna el llistat de tots els jugadors/es del sistema amb el seu percentatge mitjà d’èxits 

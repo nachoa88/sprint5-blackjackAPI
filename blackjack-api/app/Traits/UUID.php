@@ -1,7 +1,5 @@
 <?php
-
-// app/Traits/UUID.php
-
+// FINALLY AND FOR NOW, THIS TRAIT IS NOT NEEDED, I'LL LEAVE IT IN CASE I NEED IT LATER.
 namespace App\Traits;
 
 use Illuminate\Support\Str;
