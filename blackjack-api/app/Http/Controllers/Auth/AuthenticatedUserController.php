@@ -4,22 +4,29 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
-// use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class AuthenticatedUserController extends Controller
 {
 
     public function store(LoginRequest $request)
     {
-        // $credentials = $request->only('email', 'password');
-
-        // if (Auth::attempt($credentials)) {
-        //     $user = Auth::user();
-        //     $token = $user->createToken('MyApp')->accessToken;
-
-        //     return response()->json(['token' => $token], 200);
-        // } else {
-        //     return response()->json(['error' => 'Unauthorised'], 401);
-        // }
+        // Validate request data.
+        $request->validated();
+        // Check if user with the email exists.
+        $user = User::whereEmail($request['email'])->first();
+        // Check if the password is correct (password must be compared decrypted).
+        if (!$user || !Hash::check($request['password'], $user->password)) {
+            return response()->json([
+                'message' => 'Invalid login details',
+            ], 401);
+        } else {
+            $token = $user->createToken('loginToken')->accessToken;
+            return response()->json([
+                'message' => 'User logged in successfully',
+                'token' => $token
+            ], 200);
+        }
     }
 }
