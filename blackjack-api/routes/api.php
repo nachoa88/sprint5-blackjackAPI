@@ -11,8 +11,8 @@ Route::middleware('auth:api')->group(function () {
 });
 
 // Open routes
-Route::post('/login', [AuthenticatedUserController::class, 'store']);
 Route::post('/players', [RegisteredUserController::class, 'store']);
+Route::post('/login', [AuthenticatedUserController::class, 'store']);
 
 
 /*
