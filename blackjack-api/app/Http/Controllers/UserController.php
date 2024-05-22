@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateUserRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -45,15 +46,17 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, $id)
     {
-        // First, find the user by its UUID.
+        // CHECK IF THE GET USER CAN BE IMPROVED
+        // After that, find the user by its UUID.
         $user = User::where('uuid', $id)->first();
-
-        // If the user does not exist, return a 404 error.
+        // If the user does not exist, return a 404 error. (This is also handled in the request validation).
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
-        // Then, validate the request.
-        $request->validated();
+
+        // Then, validate the request. (I think this is not necessary because the request is already validated in the UpdateUserRequest class)
+        // $request->validated();
+        
         // Update the user's nickname, or set it to 'Anonymous' if no nickname is provided.
         $user->nickname = $request['nickname'] ?? 'Anonymous';
         // Save the user.

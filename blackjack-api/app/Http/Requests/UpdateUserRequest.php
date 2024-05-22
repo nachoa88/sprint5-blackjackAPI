@@ -10,11 +10,17 @@ class UpdateUserRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
+    public function authorize()
     {
-        return true;
-    }
+        // Get the authenticated user.
+        $authUser = $this->user();
 
+        // Get the UUID from the route parameters.
+        $id = $this->route('id');
+
+        // The user is authorized if their UUID matches the UUID in the route parameters.
+        return $authUser->uuid === $id;
+    }
     /**
      * Get the validation rules that apply to the request.
      *
