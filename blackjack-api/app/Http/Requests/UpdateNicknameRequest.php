@@ -4,8 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 
-class UpdateUserRequest extends FormRequest
+class UpdateNicknameRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -18,8 +19,23 @@ class UpdateUserRequest extends FormRequest
         // Get the UUID from the route parameters.
         $id = $this->route('id');
 
-        // The user is authorized if their UUID matches the UUID in the route parameters.
-        return $authUser->uuid === $id;
+        // If the authenticated user's UUID does not match the UUID in the route parameters, throw an exception.
+        if ($authUser->uuid !== $id) {
+            throw new AuthorizationException('Your UUID does not match the UUID in the request.');
+        }
+
+        // If the authenticated user does not have the 'edit nickname' permission, throw an exception.
+        if (!$authUser->hasPermissionTo('edit nickname')) {
+            throw new AuthorizationException('You do not have the required permission to edit your nickname.');
+        }
+
+        // If the authenticated user does not have the 'player' role, throw an exception.
+        if (!$authUser->hasRole('player')) {
+            throw new AuthorizationException('You do not have the required role to edit players.');
+        }
+
+        // If all checks pass, the user is authorized.
+        return true;
     }
     /**
      * Get the validation rules that apply to the request.

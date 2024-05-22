@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\UpdateUserRequest;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\UpdateNicknameRequest;
 
 class UserController extends Controller
 {
@@ -44,7 +43,7 @@ class UserController extends Controller
         //
     }
 
-    public function update(UpdateUserRequest $request, $id)
+    public function update(UpdateNicknameRequest $request, $id)
     {
         // CHECK IF THE GET USER CAN BE IMPROVED
         // After that, find the user by its UUID.
@@ -56,7 +55,7 @@ class UserController extends Controller
 
         // Then, validate the request. (I think this is not necessary because the request is already validated in the UpdateUserRequest class)
         // $request->validated();
-        
+
         // Update the user's nickname, or set it to 'Anonymous' if no nickname is provided.
         $user->nickname = $request['nickname'] ?? 'Anonymous';
         // Save the user.
