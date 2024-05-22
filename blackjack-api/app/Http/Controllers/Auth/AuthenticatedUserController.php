@@ -10,7 +10,7 @@ use App\Models\User;
 class AuthenticatedUserController extends Controller
 {
 
-    public function store(LoginRequest $request)
+    public function login(LoginRequest $request)
     {
         // Validate request data.
         $request->validated();
