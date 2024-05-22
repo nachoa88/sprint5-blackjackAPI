@@ -19,7 +19,6 @@ class RoleFactory extends Factory
     {
         return [
             'uuid' => Str::uuid(),
-            'guard_name' => 'web',
         ];
     }
 }

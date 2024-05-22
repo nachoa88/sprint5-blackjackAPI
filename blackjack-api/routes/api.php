@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Auth\AuthenticatedUserController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/users', [UserController::class, 'index']);
@@ -9,8 +11,8 @@ Route::middleware('auth:api')->group(function () {
 });
 
 // Open routes
-Route::post('/login', [UserController::class, 'login']);
-Route::post('/register', [UserController::class, 'register']);
+Route::post('/login', [AuthenticatedUserController::class, 'store']);
+Route::post('/players', [RegisteredUserController::class, 'store']);
 
 
 /*
