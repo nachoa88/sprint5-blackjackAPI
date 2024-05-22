@@ -11,6 +11,5 @@ class Role extends SpatieRole
 {
     use HasFactory;
     use HasUuids;
-    // Ver si no se tiene que usar aquí también el use UUID.
     protected $primaryKey = 'uuid';
 }

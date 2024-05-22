@@ -4,7 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-use App\Traits\UUID;
+// use App\Traits\UUID;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,8 +14,10 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens, HasRoles, UUID;
-
+    // Ver lo de UUID: si puede hacer con el protected $primaryKey = 'uuid' o con el use UUID trait creado.
+    use HasFactory, Notifiable, HasApiTokens, HasRoles, HasUuids;
+    protected $primaryKey = 'uuid';
+    
     /**
      * The attributes that are mass assignable.
      *
@@ -46,5 +49,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function games()
+    {
+        return $this->hasMany(Game::class);
     }
 }
