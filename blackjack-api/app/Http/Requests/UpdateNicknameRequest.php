@@ -13,28 +13,18 @@ class UpdateNicknameRequest extends FormRequest
      */
     public function authorize()
     {
-        // Get the authenticated user.
-        $authUser = $this->user();
+        // FOR NOW, THIS IS BEING HANDLED IN THE USER POLICY.
+        // // Get the authenticated user.
+        // $authUser = $this->user();
 
-        // Get the UUID from the route parameters.
-        $id = $this->route('id');
+        // // Get the UUID from the route parameters.
+        // $id = $this->route('id');
 
-        // If the authenticated user's UUID does not match the UUID in the route parameters, throw an exception.
-        if ($authUser->uuid !== $id) {
-            throw new AuthorizationException('Your UUID does not match the UUID in the request.');
-        }
+        // // If the authenticated user's UUID does not match the UUID in the route parameters, throw an exception.
+        // if ($authUser->uuid !== $id) {
+        //     throw new AuthorizationException('Your UUID does not match the UUID in the request.');
+        // }
 
-        // If the authenticated user does not have the 'edit nickname' permission, throw an exception.
-        if (!$authUser->hasPermissionTo('edit nickname')) {
-            throw new AuthorizationException('You do not have the required permission to edit your nickname.');
-        }
-
-        // If the authenticated user does not have the 'player' role, throw an exception.
-        if (!$authUser->hasRole('player')) {
-            throw new AuthorizationException('You do not have the required role to edit players.');
-        }
-
-        // If all checks pass, the user is authorized.
         return true;
     }
     /**

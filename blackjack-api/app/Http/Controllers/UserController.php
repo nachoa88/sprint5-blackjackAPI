@@ -3,16 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Game;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateNicknameRequest;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
 
-    public function index(): JsonResponse
+    public function index(Game $games): JsonResponse
     {
+        // Check if the authenticated user has the role & permission to view players.
+        Gate::authorize('viewAny', User::class);
+
+        // Tots els jugadors amb el seu percentatge mitjà d’èxits 
         $users = User::all();
+
+        // Games controller will have a method to calculate the win average of a user.
+        // For now, I'll show the result of the games for each user ('status' variable).
+        foreach ($users as $user) {
+            $user->games = $games->where('user_uuid', $user->uuid)->pluck('status');
+        }
 
         return response()->json($users);
     }
@@ -45,17 +57,16 @@ class UserController extends Controller
 
     public function update(UpdateNicknameRequest $request, $id)
     {
-        // CHECK IF THE GET USER CAN BE IMPROVED
-        // After that, find the user by its UUID.
+        // Get the user by its UUID.
         $user = User::where('uuid', $id)->first();
         // If the user does not exist, return a 404 error. (This is also handled in the request validation).
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        // Then, validate the request. (I think this is not necessary because the request is already validated in the UpdateUserRequest class)
-        // $request->validated();
-
+        // Check if the authenticated user can update the user, and has roles & permissions.
+        Gate::authorize('update', $user);
+        
         // Update the user's nickname, or set it to 'Anonymous' if no nickname is provided.
         $user->nickname = $request['nickname'] ?? 'Anonymous';
         // Save the user.
