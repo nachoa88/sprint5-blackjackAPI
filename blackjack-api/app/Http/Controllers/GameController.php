@@ -28,7 +28,26 @@ class GameController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validate the request...
+
+        // // Create a new game.
+        // $game = new Game;
+
+        // // Deal two cards to the player and the dealer.
+        // $game->player_hand = $this->dealCards(2);
+        // $game->dealer_hand = $this->dealCards(2);
+
+        // // Calculate the scores.
+        // $game->player_score = $this->calculateScore($game->player_hand);
+        // $game->dealer_score = $this->calculateScore($game->dealer_hand);
+
+        // // Determine the result of the game.
+        // $game->result = $this->determineResult($game->player_score, $game->dealer_score);
+
+        // // Save the game.
+        // $game->save();
+
+        // return response()->json($game, 201);
     }
 
     /**

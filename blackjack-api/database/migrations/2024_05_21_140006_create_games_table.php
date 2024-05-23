@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('games', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->enum('status', ['won', 'lost'])->default('lost');
             $table->foreignUuid('user_uuid')->constrained('users', 'uuid');
-            // $table->foreignId('deck_id')->constrained();
+            $table->foreignId('deck_id')->constrained();
+            $table->unsignedTinyInteger('player_score')->nullable();
+            $table->unsignedTinyInteger('dealer_score')->nullable();
+            $table->enum('result', ['win', 'loss', 'tie'])->nullable();
+            $table->timestamps();
         });
     }
 

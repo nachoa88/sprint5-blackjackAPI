@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Game;
-use Spatie\Permission\Models\Role;
+use App\Models\Deck;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -23,8 +23,10 @@ class DatabaseSeeder extends Seeder
             $user->assignRole('player');
         });
 
+        // Create 1 deck and 5 games for each user with that deck.
+        $deck = Deck::factory()->create();
         foreach ($users as $user) {
-            Game::factory(5)->create(['user_uuid' => $user->uuid]);
+            Game::factory(5)->create(['user_uuid' => $user->uuid, 'deck_id' => $deck->id]);
         }
 
         // Create a user with the 'super-admin' role
