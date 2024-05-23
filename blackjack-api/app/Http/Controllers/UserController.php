@@ -39,15 +39,23 @@ class UserController extends Controller
         //
     }
 
-    public function show(User $user): JsonResponse
+    public function show($id): JsonResponse
     {
-        $user = User::find($user->id);
-
+        // Get the user by its UUID.
+        $user = User::where('uuid', $id)->first();
+        // If the user does not exist, return a 404 error. (This is also handled in the request validation).
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        return response()->json($user);
+        // Gate::authorize('view', $user);
+
+        // Get the games of the user.
+        $user->games = Game::where('user_uuid', $user->uuid)->get();
+        // Return the info of the games of the user.
+        return response()->json($user->games);
+
+        // return response()->json($user);
     }
 
     public function edit(User $user)
