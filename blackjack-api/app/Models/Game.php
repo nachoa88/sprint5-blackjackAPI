@@ -45,6 +45,30 @@ class Game extends Model
         return $cards;
     }
 
+    public function calculateScore($hand): int
+    {
+        // Get the cards from the hand.
+        $cards = $hand;
+
+        // Calculate the score based on the cards and aces.
+        $score = 0;
+        $aces = 0;
+        foreach ($cards as $card) {
+            // Add the value of the card to the score.
+            $score += $card->value;
+
+            // Count the number of aces (if there are).
+            if ($this->isAce($card)) {
+                $aces++;
+            }
+        }
+
+        // Adjust score for aces (if necessary).
+        $score = $this->adjustScoreForAces($score, $aces);
+
+        return $score;
+    }
+
     public function isAce($card): bool
     {
         return $card->card_name == 'A';
@@ -61,33 +85,9 @@ class Game extends Model
         return $score;
     }
 
-    public function calculateScore($hand): int
-    {
-        // Get the cards from the hand.
-        $cards = $hand;
-
-        // Calculate the score based on the cards.
-        $score = 0;
-        $aces = 0;
-        foreach ($cards as $card) {
-            // Add the value of the card to the score.
-            $score += $card->value;
-
-            // Count the number of aces.
-            if ($this->isAce($card)) {
-                $aces++;
-            }
-        }
-
-        // Adjust score for aces if necessary.
-        $score = $this->adjustScoreForAces($score, $aces);
-
-        return $score;
-    }
-
     public function determineResult($playerScore, $dealerScore): string
     {
-        // Compare the two scores and determine the result of the game (win, loss, or tie).
+        // Compare the scores and determine the result of the game (win, loss, or tie).
         if ($playerScore > 21 || $dealerScore > $playerScore) {
             return 'loss';
         } elseif ($playerScore > $dealerScore) {

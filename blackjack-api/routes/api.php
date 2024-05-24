@@ -32,3 +32,10 @@ GET /players/ranking: retorna el rànquing mitjà de tots els jugadors/es del si
 GET /players/ranking/loser: retorna el jugador/a amb pitjor percentatge d’èxit.
 GET /players/ranking/winner: retorna el jugador/a amb millor percentatge d’èxit.
 */
+
+// ENDPOINTS PER MILLORAR JOC:
+// Route::post('/players/{id}/games/{game_id}/hit', [GameController::class, 'hit']);
+// // Maybe not necessary
+// Route::post('/players/{id}/games/{game_id}/stand', [GameController::class, 'stand']);
+// // Dealer's turn (if he shows only one card, at the end of turn shows the other one and gets more cards if his score is less than 17)
+// Route::post('/players/{id}/games/{game_id}/dealer', [GameController::class, 'dealerTurn']);

@@ -63,9 +63,19 @@ class GameController extends Controller
 
         return response()->json([
             'message' => 'Game created successfully',
-            'game details' => $game,
+            'player_cards' => $this->getHandDetails($playerHand),
+            'dealer_cards' => $this->getHandDetails($dealerHand),
+            'player_score' => $game->player_score,
+            'dealer_score' => $game->dealer_score,
+            'result' => $game->result,
             'status' => 201
         ]);
+    }
+    // Helper function to get the details of the cards in a hand.
+    private function getHandDetails($hand) {
+        return $hand->map(function ($card) {
+            return ['suit' => $card->suit, 'card_name' => $card->card_name];
+        })->toArray();
     }
 
     /**
