@@ -18,15 +18,15 @@ class DatabaseSeeder extends Seeder
         // Ensure the roles and permissions are created
         $this->call(RolesAndPermissionsSeeder::class);
 
-        // Create 10 users with the 'player' role
-        $users = User::factory(10)->create()->each(function ($user) {
+        // Create 5 users with the 'player' role
+        $users = User::factory(5)->create()->each(function ($user) {
             $user->assignRole('player');
         });
 
-        // Create 1 deck and 5 games for each user with that deck.
+        // Create 1 deck and 2 games for each user with that deck.
         $deck = Deck::factory()->create();
         foreach ($users as $user) {
-            Game::factory(5)->create(['user_uuid' => $user->uuid, 'deck_id' => $deck->id]);
+            Game::factory(2)->create(['user_uuid' => $user->uuid, 'deck_id' => $deck->id]);
         }
 
         // Create a user with the 'super-admin' role

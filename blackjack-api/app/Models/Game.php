@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,8 +14,8 @@ class Game extends Model
         'id',
         'user_uuid',
         'deck_id',
-        // 'player_hand',
-        // 'dealer_hand',
+        'player_hand',
+        'dealer_hand',
         'player_score',
         'dealer_score',
         'result',
@@ -31,7 +32,7 @@ class Game extends Model
     }
 
 
-    public function dealCards($numberOfCards)
+    public function dealCards(int $numberOfCards): Collection
     {
         // Get the top cards that were not dealt yet from the deck for this game.
         $cards = $this->deck->cards()->where('dealt', false)->orderBy('order')->take($numberOfCards)->get();
@@ -45,17 +46,14 @@ class Game extends Model
         return $cards;
     }
 
-    public function calculateScore($hand): int
+    public function calculateScore(array $cards): int
     {
-        // Get the cards from the hand.
-        $cards = $hand;
-
         // Calculate the score based on the cards and aces.
         $score = 0;
         $aces = 0;
         foreach ($cards as $card) {
             // Add the value of the card to the score.
-            $score += $card->value;
+            $score += $card['value'];
 
             // Count the number of aces (if there are).
             if ($this->isAce($card)) {
@@ -71,10 +69,10 @@ class Game extends Model
 
     public function isAce($card): bool
     {
-        return $card->card_name == 'A';
+        return $card['card_name'] == 'A';
     }
 
-    public function adjustScoreForAces($score, $aces): int
+    public function adjustScoreForAces(int $score, int $aces): int
     {
         // If the score is over 21 and there's an ace in the hand, subtract 10 for each ace.
         while ($score > 21 && $aces > 0) {
@@ -85,11 +83,11 @@ class Game extends Model
         return $score;
     }
 
-    public function determineResult($playerScore, $dealerScore): string
+    public function determineResult(int $playerScore, int $dealerScore): string
     {
         // Compare the scores and determine the result of the game (win, loss, or tie).
         if ($playerScore > 21 || $dealerScore > $playerScore) {
-            return 'loss';
+            return 'lose';
         } elseif ($playerScore > $dealerScore) {
             return 'win';
         } else {
@@ -97,7 +95,7 @@ class Game extends Model
         }
     }
 
-    public function shuffleDeck()
+    public function shuffleDeck(): void
     {
         // Get all cards.
         $cards = $this->deck->cards()->get();

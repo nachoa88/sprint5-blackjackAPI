@@ -48,14 +48,33 @@ class UserController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        // Gate::authorize('view', $user);
+        Gate::authorize('view', $user);
 
         // Get the games of the user.
-        $user->games = Game::where('user_uuid', $user->uuid)->get();
-        // Return the info of the games of the user.
-        return response()->json($user->games);
+        $games = Game::where('user_uuid', $user->uuid)
+            ->select('player_hand', 'dealer_hand', 'player_score', 'dealer_score', 'result')
+            ->get();
 
-        // return response()->json($user);
+        // Calculate the game stats.
+        $gameStats = $this->calculateGameStats($games);
+
+        // Prepare the games data.
+        $gamesData = $games->map(function ($game) {
+            return [
+                'player_hand' => json_decode($game->player_hand),
+                'dealer_hand' => json_decode($game->dealer_hand),
+                'player_score' => $game->player_score,
+                'dealer_score' => $game->dealer_score,
+                'result' => $game->result,
+            ];
+        });
+
+        // Return the info of the games of the user.
+        return response()->json([
+            'user_nickname' => $user->nickname,
+            'game_stats' => $gameStats,
+            'games' => $gamesData
+        ]);
     }
 
     public function edit(User $user)
@@ -74,7 +93,7 @@ class UserController extends Controller
 
         // Check if the authenticated user can update the user, and has roles & permissions.
         Gate::authorize('update', $user);
-        
+
         // Update the user's nickname, or set it to 'Anonymous' if no nickname is provided.
         $user->nickname = $request['nickname'] ?? 'Anonymous';
         // Save the user.
@@ -89,5 +108,21 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         //
+    }
+
+    // HELPER FUNCTION for percentage calculation.
+    private function calculateGameStats($games): array
+    {
+        $totalGames = $games->count();
+
+        $wins = $games->where('result', 'win')->count();
+        $losses = $games->where('result', 'lose')->count();
+        $ties = $games->where('result', 'tie')->count();
+
+        return [
+            'win_percentage' => $totalGames > 0 ? round(($wins / $totalGames) * 100, 2) : 0,
+            'lose_percentage' => $totalGames > 0 ? round(($losses / $totalGames) * 100, 2) : 0,
+            'tie_percentage' => $totalGames > 0 ? round(($ties / $totalGames) * 100, 2) : 0,
+        ];
     }
 }
