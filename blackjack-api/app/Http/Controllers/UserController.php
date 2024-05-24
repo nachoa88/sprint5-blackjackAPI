@@ -5,14 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Game;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+// use Illuminate\Http\Request;
 use App\Http\Requests\UpdateNicknameRequest;
 use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
 
-    public function index(Game $games): JsonResponse
+    public function index(): JsonResponse
     {
         // Check if the authenticated user has the role & permission to view players.
         Gate::authorize('viewAny', User::class);
@@ -20,23 +20,33 @@ class UserController extends Controller
         // Tots els jugadors amb el seu percentatge mitjà d’èxits 
         $users = User::all();
 
-        // Games controller will have a method to calculate the win average of a user.
-        // For now, I'll show the result of the games for each user ('result' variable).
+        // Set totals to 0.
+        $totalWins = 0;
+        $totalLosses = 0;
+        $totalTies = 0;
+
+        // For each user get the wins, losses and ties, and total amount of games.
         foreach ($users as $user) {
-            $user->games = $games->where('user_uuid', $user->uuid)->pluck('result');
+            $userStats = $user->calculateGameStats();
+            $user->gameStats = $userStats;
+            // For each user add the wins, losses and ties to the total.
+            $totalWins += $user->wins;
+            $totalLosses += $user->losses;
+            $totalTies += $user->ties;
         }
+        // Calculate the total amount of games.
+        $totalGames = $totalWins + $totalTies + $totalLosses;
+        // Calculate the average of wins, losses and ties.
+        $winsAverage = $totalGames > 0 ? round(($totalWins / $totalGames) * 100, 2) : 0;
+        $lossesAverage = $totalGames > 0 ? round(($totalLosses / $totalGames) * 100, 2) : 0;
+        $tiesAverage = $totalGames > 0 ? round(($totalTies / $totalGames)* 100, 2) : 0;
 
-        return response()->json($users);
-    }
-
-    public function create()
-    {
-        //
-    }
-
-    public function store(Request $request)
-    {
-        //
+        return response()->json([
+            'total_wins_average' => $winsAverage,
+            'total_losses_average' => $lossesAverage,
+            'total_ties_average' => $tiesAverage,
+            'user_details' => $users,
+        ]);
     }
 
     public function show($id): JsonResponse
@@ -55,9 +65,6 @@ class UserController extends Controller
             ->select('player_hand', 'dealer_hand', 'player_score', 'dealer_score', 'result')
             ->get();
 
-        // Calculate the game stats.
-        $gameStats = $this->calculateGameStats($games);
-
         // Prepare the games data.
         $gamesData = $games->map(function ($game) {
             return [
@@ -72,7 +79,7 @@ class UserController extends Controller
         // Return the info of the games of the user.
         return response()->json([
             'user_nickname' => $user->nickname,
-            'game_stats' => $gameStats,
+            'game_stats' => $user->calculateGameStats(),
             'games' => $gamesData
         ]);
     }
@@ -108,21 +115,5 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         //
-    }
-
-    // HELPER FUNCTION for percentage calculation.
-    private function calculateGameStats($games): array
-    {
-        $totalGames = $games->count();
-
-        $wins = $games->where('result', 'win')->count();
-        $losses = $games->where('result', 'lose')->count();
-        $ties = $games->where('result', 'tie')->count();
-
-        return [
-            'win_percentage' => $totalGames > 0 ? round(($wins / $totalGames) * 100, 2) : 0,
-            'lose_percentage' => $totalGames > 0 ? round(($losses / $totalGames) * 100, 2) : 0,
-            'tie_percentage' => $totalGames > 0 ? round(($ties / $totalGames) * 100, 2) : 0,
-        ];
     }
 }

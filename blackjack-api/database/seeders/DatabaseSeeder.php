@@ -23,10 +23,21 @@ class DatabaseSeeder extends Seeder
             $user->assignRole('player');
         });
 
-        // Create 1 deck and 2 games for each user with that deck.
-        $deck = Deck::factory()->create();
+        // Get the deck from the service container.
+        $deck = app(Deck::class);
+        // Create 2 games for each user with that deck, and set the user's wins, losses, and ties
         foreach ($users as $user) {
-            Game::factory(2)->create(['user_uuid' => $user->uuid, 'deck_id' => $deck->id]);
+            $games = Game::factory(5)->create(['user_uuid' => $user->uuid, 'deck_id' => $deck->id]);
+            foreach ($games as $game) {
+                if ($game->result === 'win') {
+                    $user->wins++;
+                } elseif ($game->result === 'lose') {
+                    $user->losses++;
+                } else {
+                    $user->ties++;
+                }
+            }
+            $user->save();
         }
 
         // Create a user with the 'super-admin' role

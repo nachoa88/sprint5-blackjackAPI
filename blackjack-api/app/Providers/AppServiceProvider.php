@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Deck;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,7 +13,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register the deck as a singleton, we need only one deck for the whole application.
+        $this->app->singleton(Deck::class, function ($app) {
+            // Create a new deck and shuffle it.
+            $deck = Deck::factory()->create();
+
+            return $deck;
+        });
     }
 
     /**

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Game;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 
 class GameController extends Controller
 {
@@ -43,8 +42,8 @@ class GameController extends Controller
         $game->shuffleDeck();
 
         // Deal two cards to the player and the dealer & Use the helper function to get only details neede of the cards in a hand.
-        $playerHand = $this->getHandDetails($game->dealCards(2));
-        $dealerHand = $this->getHandDetails($game->dealCards(2));
+        $playerHand = $game->getHandDetails($game->dealCards(2));
+        $dealerHand = $game->getHandDetails($game->dealCards(2));
 
         // Calculate the scores.
         $playerScore = $game->calculateScore($playerHand);
@@ -52,6 +51,8 @@ class GameController extends Controller
 
         // Determine the result of the game.
         $result = $game->determineResult($playerScore, $dealerScore);
+
+        $user->addGameResult($result);
 
         // Update the game with the hands, scores, and result.
         $game->update([
@@ -102,13 +103,5 @@ class GameController extends Controller
     public function destroy(Game $game)
     {
         //
-    }
-
-    // HELPER FUNCTION: get the details of the cards in a hand.
-    private function getHandDetails(Collection $hand): array
-    {
-        return $hand->map(function ($card) {
-            return ['suit' => $card->suit, 'card_name' => $card->card_name, 'value' => $card->value];
-        })->toArray();
     }
 }
