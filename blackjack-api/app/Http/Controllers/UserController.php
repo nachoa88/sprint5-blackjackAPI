@@ -23,6 +23,8 @@ class UserController extends Controller
         // Games controller will have a method to calculate the win average of a user.
         // For now, I'll show the result of the games for each user ('result' variable).
         foreach ($users as $user) {
+            // Calculate the game stats.
+            $gameStats = $this->calculateGameStats($user->games);
             $user->games = $games->where('user_uuid', $user->uuid)->pluck('result');
         }
 

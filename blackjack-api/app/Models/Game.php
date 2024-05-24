@@ -110,4 +110,12 @@ class Game extends Model
             $card->save();
         }
     }
+
+    // HELPER FUNCTION: get the details of the cards in a hand.
+    public function getHandDetails(Collection $hand): array
+    {
+        return $hand->map(function ($card) {
+            return ['suit' => $card->suit, 'card_name' => $card->card_name, 'value' => $card->value];
+        })->toArray();
+    }
 }

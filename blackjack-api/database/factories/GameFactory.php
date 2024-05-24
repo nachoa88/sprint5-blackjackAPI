@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Game;
+use App\Models\Deck;
 use App\Models\User;
 
 /**
@@ -17,24 +19,38 @@ class GameFactory extends Factory
      */
     public function definition(): array
     {
-        // This is a simple implementation of the game logic for Factory purposes.
-        $playerScore = $this->faker->numberBetween(11, 21);
-        $dealerScore = $this->faker->numberBetween(11, 21);
-        // Set the result based on the scores.
-        $result = 'tie';
-        if ($playerScore > $dealerScore) {
-            $result = 'win';
-        } elseif ($playerScore < $dealerScore) {
-            $result = 'lose';
-        }
+        // Create a new game instance without persisting it to the database.
+        $game = new Game();
+
+        // Get the deck from the service container.
+        $deck = app(Deck::class);
+
+        // Associate the deck with the game.
+        $game->deck()->associate($deck);
+
+        // Shuffle the deck.
+        $game->shuffleDeck();
+
+        // Deal two cards to the player and the dealer & Use the helper function to get only details neede of the cards in a hand.
+        $playerHand = $game->getHandDetails($game->dealCards(2));
+        $dealerHand = $game->getHandDetails($game->dealCards(2));
+
+        // Calculate the scores.
+        $playerScore = $game->calculateScore($playerHand);
+        $dealerScore = $game->calculateScore($dealerHand);
+
+        // Determine the result of the game.
+        $result = $game->determineResult($playerScore, $dealerScore);
 
         return [
             'user_uuid' => User::factory(),
-            'player_hand' => null,
-            'dealer_hand' => null,
+            // These two fields need to be JSON encoded because they are arrays.
+            'player_hand' => json_encode($playerHand),
+            'dealer_hand' => json_encode($dealerHand),
             'player_score' => $playerScore,
             'dealer_score' => $dealerScore,
             'result' => $result,
+            'deck_id' => $deck->id,
         ];
     }
 }
