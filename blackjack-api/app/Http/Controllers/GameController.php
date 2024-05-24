@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Game;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class GameController extends Controller
 {
@@ -41,9 +42,9 @@ class GameController extends Controller
         // Shuffle deck before starting the game.
         $game->shuffleDeck();
 
-        // Deal two cards to the player and the dealer.
-        $playerHand = $game->dealCards(2);
-        $dealerHand = $game->dealCards(2);
+        // Deal two cards to the player and the dealer & Use the helper function to get only details neede of the cards in a hand.
+        $playerHand = $this->getHandDetails($game->dealCards(2));
+        $dealerHand = $this->getHandDetails($game->dealCards(2));
 
         // Calculate the scores.
         $playerScore = $game->calculateScore($playerHand);
@@ -63,21 +64,14 @@ class GameController extends Controller
 
         return response()->json([
             'message' => 'Game created successfully',
-            'player_cards' => $this->getHandDetails($playerHand),
-            'dealer_cards' => $this->getHandDetails($dealerHand),
+            'player_cards' => $game->player_hand,
+            'dealer_cards' => $game->dealer_hand,
             'player_score' => $game->player_score,
             'dealer_score' => $game->dealer_score,
             'result' => $game->result,
             'status' => 201
         ]);
     }
-    // Helper function to get the details of the cards in a hand.
-    private function getHandDetails($hand) {
-        return $hand->map(function ($card) {
-            return ['suit' => $card->suit, 'card_name' => $card->card_name];
-        })->toArray();
-    }
-
     /**
      * Display the specified resource.
      */
@@ -108,5 +102,13 @@ class GameController extends Controller
     public function destroy(Game $game)
     {
         //
+    }
+
+    // HELPER FUNCTION: get the details of the cards in a hand.
+    private function getHandDetails(Collection $hand): array
+    {
+        return $hand->map(function ($card) {
+            return ['suit' => $card->suit, 'card_name' => $card->card_name, 'value' => $card->value];
+        })->toArray();
     }
 }

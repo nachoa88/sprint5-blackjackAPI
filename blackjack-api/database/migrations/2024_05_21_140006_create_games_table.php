@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignUuid('user_uuid')->constrained('users', 'uuid');
             $table->foreignId('deck_id')->constrained();
+            $table->json('player_hand')->nullable();
+            $table->json('dealer_hand')->nullable();
             $table->unsignedTinyInteger('player_score')->nullable();
             $table->unsignedTinyInteger('dealer_score')->nullable();
-            $table->enum('result', ['win', 'loss', 'tie'])->nullable();
+            $table->enum('result', ['win', 'lose', 'tie'])->nullable();
             $table->timestamps();
         });
     }

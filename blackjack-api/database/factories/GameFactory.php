@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User;
-use App\Models\Deck;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Game>
@@ -26,11 +25,13 @@ class GameFactory extends Factory
         if ($playerScore > $dealerScore) {
             $result = 'win';
         } elseif ($playerScore < $dealerScore) {
-            $result = 'loss';
+            $result = 'lose';
         }
 
         return [
             'user_uuid' => User::factory(),
+            'player_hand' => null,
+            'dealer_hand' => null,
             'player_score' => $playerScore,
             'dealer_score' => $dealerScore,
             'result' => $result,

@@ -18,7 +18,7 @@ class UserPolicy
         }
 
         // Check if the user has the 'super-admin' or 'moderator' role.
-        if(!$authenticatedUser->hasRole('super-admin') && !$authenticatedUser->hasRole('moderator')) {
+        if (!$authenticatedUser->hasRole('super-admin') && !$authenticatedUser->hasRole('moderator')) {
             return Response::deny('You do not have the required role to view users.');
         }
 
@@ -29,9 +29,24 @@ class UserPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, User $model)
+    public function view(User $authenticatedUser, User $user)
     {
-        //
+        // First, check if the authenticated user's UUID matches the user's UUID in the request.
+        if ($authenticatedUser->uuid !== $user->uuid) {
+            return Response::deny('Your UUID does not match the UUID in the request.');
+        }
+
+        // Check if the user has the 'view own game history' permission.
+        if (!$authenticatedUser->hasPermissionTo('view own game history')) {
+            return Response::deny('You do not have the required permission to view users.');
+        }
+
+        // Check if the user has the 'player' role.
+        if (!$authenticatedUser->hasRole('player')) {
+            return Response::deny('You do not have the required role to view users.');
+        }
+        // If all the checks pass, allow the action.
+        return Response::allow();
     }
 
     /**
