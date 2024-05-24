@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Game;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 
 class GameController extends Controller
 {
@@ -52,6 +51,8 @@ class GameController extends Controller
 
         // Determine the result of the game.
         $result = $game->determineResult($playerScore, $dealerScore);
+
+        $user->addGameResult($result);
 
         // Update the game with the hands, scores, and result.
         $game->update([

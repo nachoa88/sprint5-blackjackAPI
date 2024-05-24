@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
         $deck = app(Deck::class);
         // Create 2 games for each user with that deck, and set the user's wins, losses, and ties
         foreach ($users as $user) {
-            $games = Game::factory(2)->create(['user_uuid' => $user->uuid, 'deck_id' => $deck->id]);
+            $games = Game::factory(5)->create(['user_uuid' => $user->uuid, 'deck_id' => $deck->id]);
             foreach ($games as $game) {
                 if ($game->result === 'win') {
                     $user->wins++;
