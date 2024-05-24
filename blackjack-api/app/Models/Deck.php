@@ -9,13 +9,13 @@ class Deck extends Model
 {
     use HasFactory;
 
-    public function deckCards()
+    public function cards()
     {
-        return $this->hasMany(DeckCard::class);
+        return $this->hasMany(Card::class);
     }
 
-    public function game()
+    public function games()
     {
-        return $this->belongsTo(Game::class);
+        return $this->hasMany(Game::class);
     }
 }

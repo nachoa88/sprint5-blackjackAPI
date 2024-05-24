@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\Auth\AuthenticatedUserController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
@@ -13,6 +14,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/players', [UserController::class, 'index']);
     // GET /players/{id}/games: retorna el llistat de jugades per un jugador/a.
     Route::get('/players/{id}/games', [UserController::class, 'show']);
+    // POST /players/{id}/games/ : un jugador/a específic realitza una tirada dels daus.
+    Route::post('/players/{id}/games', [GameController::class, 'store']);
 });
 
 // PUBLIC ROUTES
@@ -24,7 +27,6 @@ Route::post('/login', [AuthenticatedUserController::class, 'login']);
 
 /* ENDPOINTS PENDENTS:
 
-POST /players/{id}/games/ : un jugador/a específic realitza una tirada dels daus.
 DELETE /players/{id}/games: elimina les tirades del jugador/a.
 GET /players/ranking: retorna el rànquing mitjà de tots els jugadors/es del sistema. És a dir, el percentatge mitjà d’èxits.
 GET /players/ranking/loser: retorna el jugador/a amb pitjor percentatge d’èxit.

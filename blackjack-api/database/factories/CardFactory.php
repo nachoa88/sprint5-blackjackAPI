@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\DeckCard>
  */
-class DeckCardFactory extends Factory
+class CardFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,7 @@ class DeckCardFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            // Card factory has nothing because it's being created in the DeckFactory.
         ];
     }
 }

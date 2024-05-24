@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class GameController extends Controller
@@ -26,28 +27,45 @@ class GameController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, $id)
     {
-        // Validate the request...
+        // Find the user.
+        $user = User::findOrFail($id);
 
-        // // Create a new game.
-        // $game = new Game;
+        // Create a new game with the user's UUID.
+        $game = Game::factory()->create([
+            'user_uuid' => $user->uuid,
+            'deck_id' => '1',
+        ]);
 
-        // // Deal two cards to the player and the dealer.
-        // $game->player_hand = $this->dealCards(2);
-        // $game->dealer_hand = $this->dealCards(2);
+        // Shuffle deck before starting the game.
+        $game->shuffleDeck();
 
-        // // Calculate the scores.
-        // $game->player_score = $this->calculateScore($game->player_hand);
-        // $game->dealer_score = $this->calculateScore($game->dealer_hand);
+        // Deal two cards to the player and the dealer.
+        $playerHand = $game->dealCards(2);
+        $dealerHand = $game->dealCards(2);
 
-        // // Determine the result of the game.
-        // $game->result = $this->determineResult($game->player_score, $game->dealer_score);
+        // Calculate the scores.
+        $playerScore = $game->calculateScore($playerHand);
+        $dealerScore = $game->calculateScore($dealerHand);
 
-        // // Save the game.
-        // $game->save();
+        // Determine the result of the game.
+        $result = $game->determineResult($playerScore, $dealerScore);
 
-        // return response()->json($game, 201);
+        // Update the game with the hands, scores, and result.
+        $game->update([
+            'player_hand' => $playerHand,
+            'dealer_hand' => $dealerHand,
+            'player_score' => $playerScore,
+            'dealer_score' => $dealerScore,
+            'result' => $result,
+        ]);
+
+        return response()->json([
+            'message' => 'Game created successfully',
+            'game details' => $game,
+            'status' => 201
+        ]);
     }
 
     /**
