@@ -21,9 +21,9 @@ class UserController extends Controller
         $users = User::all();
 
         // Games controller will have a method to calculate the win average of a user.
-        // For now, I'll show the result of the games for each user ('status' variable).
+        // For now, I'll show the result of the games for each user ('result' variable).
         foreach ($users as $user) {
-            $user->games = $games->where('user_uuid', $user->uuid)->pluck('status');
+            $user->games = $games->where('user_uuid', $user->uuid)->pluck('result');
         }
 
         return response()->json($users);
