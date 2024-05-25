@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
-
+    // Show all players & their average win percentages
     public function index(): JsonResponse
     {
         // Check if the authenticated user has the role & permission to view players.
@@ -20,53 +20,30 @@ class UserController extends Controller
         // Tots els jugadors amb el seu percentatge mitjà d’èxits 
         $users = User::all();
 
-        // Set totals to 0.
-        $totalWins = 0;
-        $totalLosses = 0;
-        $totalTies = 0;
-
-        // For each user get the wins, losses and ties, and total amount of games.
-        foreach ($users as $user) {
-            $userStats = $user->calculateGameStats();
-            $user->gameStats = $userStats;
-            // For each user add the wins, losses and ties to the total.
-            $totalWins += $user->wins;
-            $totalLosses += $user->losses;
-            $totalTies += $user->ties;
-        }
-        // Calculate the total amount of games.
-        $totalGames = $totalWins + $totalTies + $totalLosses;
-        // Calculate the average of wins, losses and ties.
-        $winsAverage = $totalGames > 0 ? round(($totalWins / $totalGames) * 100, 2) : 0;
-        $lossesAverage = $totalGames > 0 ? round(($totalLosses / $totalGames) * 100, 2) : 0;
-        $tiesAverage = $totalGames > 0 ? round(($totalTies / $totalGames) * 100, 2) : 0;
+        // User helper function to calculate the game stats for all the players:
+        $stats = User::calculateTotalGameStats($users);
 
         return response()->json([
-            'total_wins_average' => $winsAverage,
-            'total_losses_average' => $lossesAverage,
-            'total_ties_average' => $tiesAverage,
+            'total_wins_average' => $stats['wins_average'],
+            'total_losses_average' => $stats['losses_average'],
+            'total_ties_average' => $stats['ties_average'],
             'user_details' => $users,
         ]);
     }
 
+    // Show info of one player
     public function show($id): JsonResponse
     {
         // Get the user by its UUID.
-        $user = User::where('uuid', $id)->first();
-        // If the user does not exist, return a 404 error. (This is also handled in the request validation).
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
+        $user = User::findByUuid($id);
 
         Gate::authorize('view', $user);
 
         // Get the games of the user.
-        $games = Game::where('user_uuid', $user->uuid)
-            ->select('player_hand', 'dealer_hand', 'player_score', 'dealer_score', 'result')
-            ->get();
+        $user->load('games');
 
-        // Prepare the games data.
-        $gamesData = $games->map(function ($game) {
+        // Prepare the games data. (This maybe could be done with a Resource to prepare Game Data)
+        $gamesData = $user->games->map(function ($game) {
             return [
                 'player_hand' => json_decode($game->player_hand),
                 'dealer_hand' => json_decode($game->dealer_hand),
@@ -84,19 +61,11 @@ class UserController extends Controller
         ]);
     }
 
-    public function edit(User $user)
-    {
-        //
-    }
-
-    public function update(UpdateNicknameRequest $request, $id)
+    // Update Nickname for player
+    public function update(UpdateNicknameRequest $request, $id): JsonResponse
     {
         // Get the user by its UUID.
-        $user = User::where('uuid', $id)->first();
-        // If the user does not exist, return a 404 error. (This is also handled in the request validation).
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
+        $user = User::findByUuid($id);
 
         // Check if the authenticated user can update the user, and has roles & permissions.
         Gate::authorize('update', $user);
@@ -112,15 +81,11 @@ class UserController extends Controller
         ]);
     }
 
-    public function destroyGames($id)
+    // Delete all game history for player
+    public function destroyGames($id): JsonResponse
     {
         // Get the user by its UUID.
-        $user = User::where('uuid', $id)->first();
-
-        // If the user does not exist, return a 404 error. (This is also handled in the request validation).
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
+        $user = User::findByUuid($id);
 
         // Check if the authenticated user can delete the user's games, and has roles & permissions.
         Gate::authorize('deleteGames', $user);
@@ -135,5 +100,49 @@ class UserController extends Controller
         $user->save();
 
         return response()->json(['message' => 'All games deleted successfully']);
+    }
+
+    // Get the best player and its stats
+    public function best(): JsonResponse
+    {
+        Gate::authorize('viewAny', User::class);
+
+        $users = User::all();
+        // Get the game stats for all the players.
+        foreach ($users as $user) {
+            $userStats = $user->calculateGameStats();
+            $user->gameStats = $userStats;
+        }
+        // Get the user with the best win percentage.
+        $bestUser = $users->sortByDesc('gameStats.win_percentage')->first();
+
+        return response()->json([
+            'message' => 'Best player found successfully',
+            'user_nickname' => $bestUser->nickname,
+            'user_stats' => $bestUser->gameStats,
+            'user_details' => $bestUser,
+        ]);
+    }
+
+    // Get the worst player and its stats
+    public function worst(): JsonResponse
+    {
+        Gate::authorize('viewAny', User::class);
+
+        $users = User::all();
+        // Get the game stats for all the players.
+        foreach ($users as $user) {
+            $userStats = $user->calculateGameStats();
+            $user->gameStats = $userStats;
+        }
+        // Get the user with the worst win percentage.
+        $worstUser = $users->sortBy('gameStats.win_percentage')->first();
+
+        return response()->json([
+            'message' => 'Worst player found successfully',
+            'user_nickname' => $worstUser->nickname,
+            'user_stats' => $worstUser->gameStats,
+            'user_details' => $worstUser,
+        ]);
     }
 }
