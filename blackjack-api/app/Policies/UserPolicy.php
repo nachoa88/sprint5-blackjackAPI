@@ -84,9 +84,25 @@ class UserPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, User $model)
+    public function deleteGames(User $authenticatedUser, User $user)
     {
-        //
+        // First, check if the authenticated user's UUID matches the user's UUID in the request.
+        if ($authenticatedUser->uuid !== $user->uuid) {
+            return Response::deny('Your UUID does not match the UUID in the request.');
+        }
+
+        // Next, check if the authenticated user has the 'delete own game history' permission.
+        if (!$authenticatedUser->hasPermissionTo('delete own game history')) {
+            return Response::deny('You do not have the required permission to delete the game history.');
+        }
+
+        // Finally, check if the authenticated user has the 'player' role.
+        if (!$authenticatedUser->hasRole('player')) {
+            return Response::deny('You do not have the required role to delete the game history.');
+        }
+
+        // If all checks pass, allow the action.
+        return Response::allow();
     }
 
     /**

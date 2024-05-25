@@ -16,7 +16,7 @@ Route::middleware('auth:api')->group(function () {
     // POST /players/{id}/games/ : un jugador/a específic realitza una tirada dels daus.
     Route::post('/players/{id}/games', [GameController::class, 'store']);
     // DELETE /players/{id}/games: elimina les tirades del jugador/a.
-    Route::delete('/players/{id}/games', [GameController::class, 'destroyAll']);
+    Route::delete('/players/{id}/games', [UserController::class, 'destroyGames']);
 
     // ACCESSED BY MODERATOR & SUPER-ADMIN:
     // GET /players: retorna el llistat de tots els jugadors/es del sistema amb el seu percentatge mitjà d’èxits 

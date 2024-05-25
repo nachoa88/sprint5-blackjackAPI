@@ -39,7 +39,7 @@ class UserController extends Controller
         // Calculate the average of wins, losses and ties.
         $winsAverage = $totalGames > 0 ? round(($totalWins / $totalGames) * 100, 2) : 0;
         $lossesAverage = $totalGames > 0 ? round(($totalLosses / $totalGames) * 100, 2) : 0;
-        $tiesAverage = $totalGames > 0 ? round(($totalTies / $totalGames)* 100, 2) : 0;
+        $tiesAverage = $totalGames > 0 ? round(($totalTies / $totalGames) * 100, 2) : 0;
 
         return response()->json([
             'total_wins_average' => $winsAverage,
@@ -112,8 +112,28 @@ class UserController extends Controller
         ]);
     }
 
-    public function destroy(User $user)
+    public function destroyGames($id)
     {
-        //
+        // Get the user by its UUID.
+        $user = User::where('uuid', $id)->first();
+
+        // If the user does not exist, return a 404 error. (This is also handled in the request validation).
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        // Check if the authenticated user can delete the user's games, and has roles & permissions.
+        Gate::authorize('deleteGames', $user);
+
+        // Delete the user's games.
+        $user->games()->delete();
+
+        // Reset user stats for wins, losses and ties.
+        $user->wins = 0;
+        $user->losses = 0;
+        $user->ties = 0;
+        $user->save();
+
+        return response()->json(['message' => 'All games deleted successfully']);
     }
 }
