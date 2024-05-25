@@ -52,7 +52,9 @@ class GameController extends Controller
         // Determine the result of the game.
         $result = $game->determineResult($playerScore, $dealerScore);
 
-        $user->addGameResult($result);
+        $user->game_result = $result;
+        // Save the user with the updated game result.
+        $user->save();
 
         // Update the game with the hands, scores, and result.
         $game->update([

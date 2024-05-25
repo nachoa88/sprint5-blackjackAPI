@@ -35,7 +35,7 @@ class UserController extends Controller
     public function show($id): JsonResponse
     {
         // Get the user by its UUID.
-        $user = User::findByUuid($id);
+        $user = User::findOrFail($id);
 
         Gate::authorize('view', $user);
 
@@ -56,7 +56,7 @@ class UserController extends Controller
         // Return the info of the games of the user.
         return response()->json([
             'user_nickname' => $user->nickname,
-            'game_stats' => $user->calculateGameStats(),
+            'game_stats' => $user->game_stats,
             'games' => $gamesData
         ]);
     }
@@ -65,7 +65,7 @@ class UserController extends Controller
     public function update(UpdateNicknameRequest $request, $id): JsonResponse
     {
         // Get the user by its UUID.
-        $user = User::findByUuid($id);
+        $user = User::findOrFail($id);
 
         // Check if the authenticated user can update the user, and has roles & permissions.
         Gate::authorize('update', $user);
@@ -85,7 +85,7 @@ class UserController extends Controller
     public function destroyGames($id): JsonResponse
     {
         // Get the user by its UUID.
-        $user = User::findByUuid($id);
+        $user = User::findOrFail($id);
 
         // Check if the authenticated user can delete the user's games, and has roles & permissions.
         Gate::authorize('deleteGames', $user);
@@ -110,7 +110,7 @@ class UserController extends Controller
         $users = User::all();
         // Get the game stats for all the players.
         foreach ($users as $user) {
-            $userStats = $user->calculateGameStats();
+            $userStats = $user->game_stats;
             $user->gameStats = $userStats;
         }
         // Get the user with the best win percentage.
@@ -132,7 +132,7 @@ class UserController extends Controller
         $users = User::all();
         // Get the game stats for all the players.
         foreach ($users as $user) {
-            $userStats = $user->calculateGameStats();
+            $userStats = $user->game_stats;
             $user->gameStats = $userStats;
         }
         // Get the user with the worst win percentage.

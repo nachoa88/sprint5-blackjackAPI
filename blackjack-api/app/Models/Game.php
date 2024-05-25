@@ -10,6 +10,10 @@ class Game extends Model
 {
     use HasFactory;
 
+    const WIN = 'win';
+    const LOSE = 'lose';
+    const TIE = 'tie';
+
     protected $fillable = [
         'id',
         'user_uuid',
@@ -87,11 +91,11 @@ class Game extends Model
     {
         // Compare the scores and determine the result of the game (win, loss, or tie).
         if ($playerScore > 21 || $dealerScore > $playerScore) {
-            return 'lose';
+            return self::LOSE;
         } elseif ($playerScore > $dealerScore) {
-            return 'win';
+            return self::WIN;
         } else {
-            return 'tie';
+            return self::TIE;
         }
     }
 

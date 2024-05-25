@@ -4,7 +4,6 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-// use App\Traits\UUID;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,7 +13,6 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    // Ver lo de UUID: si puede hacer con el protected $primaryKey = 'uuid' o con el use UUID trait creado.
     use HasFactory, Notifiable, HasApiTokens, HasRoles, HasUuids;
     protected $primaryKey = 'uuid';
 
@@ -58,16 +56,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Game::class);
     }
-    
-    
-    // Static function to find a user by UUID, it's static so it can be called without an instance of the class.
-    public static function findByUuid($uuid): User
-    {
-        return static::where('uuid', $uuid)->firstOrFail();
-    }
 
-    // HELPER FUNCTION for user's game stats calculation.
-    public function calculateGameStats(): array
+    // Get the game stats of a user.
+    // Accessor functions can be called as properties, in this case, $user->game_stats
+    public function getGameStatsAttribute(): array
     {
         $totalGames = $this->games->count();
 
@@ -82,6 +74,19 @@ class User extends Authenticatable
         ];
     }
 
+    // Mutator for game result. Mutators are called automatically when setting the value of an attribute on the model.
+    // In this case, it's called when setting the game_result = 'result' attribute.
+    public function setGameResultAttribute(string $result): void
+    {
+        if ($result === 'win') {
+            $this->wins++;
+        } elseif ($result === 'lose') {
+            $this->losses++;
+        } else {
+            $this->ties++;
+        }
+    }
+
     // HELPER FUNCTION to calculate the total game stats for all the players. 
     // It's static so it can be called without an instance of the class, because it's not related to a specific user.
     public static function calculateTotalGameStats($users): array
@@ -93,7 +98,7 @@ class User extends Authenticatable
 
         // For each user get the wins, losses and ties, and total amount of games.
         foreach ($users as $user) {
-            $userStats = $user->calculateGameStats();
+            $userStats = $user->getGameStatsAttribute();
             $user->gameStats = $userStats;
             // For each user add the wins, losses and ties to the total.
             $totalWins += $user->wins;
@@ -116,19 +121,5 @@ class User extends Authenticatable
             'losses_average' => $lossesAverage,
             'ties_average' => $tiesAverage,
         ];
-    }
-
-
-    // HELPER FUNCTION to add a game result to the user.
-    public function addGameResult(string $result): void
-    {
-        if ($result === 'win') {
-            $this->wins++;
-        } elseif ($result === 'lose') {
-            $this->losses++;
-        } else {
-            $this->ties++;
-        }
-        $this->save();
     }
 }
