@@ -17,4 +17,10 @@ class UserController extends TestCase
 
         $response->assertStatus(200);
     }
+
+
+
+    // Esto sería para pasar en un header para usuarios autenticados.
+    // $user = User::where('email', 'player@mail.com')->first();
+    // $token = $user->createToken('loginToken')->accessToken;
 }

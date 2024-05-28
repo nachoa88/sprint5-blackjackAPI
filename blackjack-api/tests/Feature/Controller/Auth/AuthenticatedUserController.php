@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 class AuthenticatedUserController extends TestCase
 {
-    public function testLogin(): void
+    public function testSuccessfulLogin(): void
     {
         $payload = [
             'email' => 'test@mail.com',
@@ -24,7 +24,33 @@ class AuthenticatedUserController extends TestCase
             ]);
     }
 
-    // Esto sería para pasar en un header para usuarios autenticados.
-    // $user = User::where('email', 'player@mail.com')->first();
-    // $token = $user->createToken('loginToken')->accessToken;
+    public function testUnsuccessfulLoginWithIncorrectPassword(): void
+    {
+        $payload = [
+            'email' => 'test@mail.com',
+            'password' => '12345678',
+        ];
+
+        $response = $this->json('POST', '/api/login', $payload);
+        $response
+            ->assertStatus(401)
+            ->assertJsonStructure([
+                'message',
+            ]);
+    }
+
+    public function testUnsuccessfulLoginWithNonExistentEmail(): void
+    {
+        $payload = [
+            'email' => 'testing@mail.com',
+            'password' => '123456789',
+        ];
+
+        $response = $this->json('POST', '/api/login', $payload);
+        $response
+            ->assertStatus(401)
+            ->assertJsonStructure([
+                'message',
+            ]);
+    }
 }
