@@ -7,9 +7,7 @@ use Illuminate\Auth\Access\Response;
 
 class UserPolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
+ 
     public function viewAny(User $authenticatedUser): Response
     {
         // Check if the user has the 'moderator' role.
@@ -26,9 +24,6 @@ class UserPolicy
         return Response::allow();
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
     public function view(User $authenticatedUser, User $user): Response
     {
         // First, check if the authenticated user's UUID matches the user's UUID in the request.
@@ -49,9 +44,6 @@ class UserPolicy
         return Response::allow();
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
     public function update(User $authenticatedUser, User $user): Response
     {
         // First, check if the authenticated user's UUID matches the user's UUID in the request.
@@ -73,9 +65,6 @@ class UserPolicy
         return Response::allow();
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
     public function deleteAllGames(User $authenticatedUser, User $user): Response
     {
         // First, check if the authenticated user's UUID matches the user's UUID in the request.

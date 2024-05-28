@@ -10,25 +10,7 @@ use Illuminate\Support\Facades\Gate;
 
 class GameController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Create a new game for the player
     public function store(Request $request, $id)
     {
         // Find the user.
@@ -76,21 +58,6 @@ class GameController extends Controller
             'result' => $game->result,
             'status' => 201
         ]);
-    }
-
-    public function show(Game $game)
-    {
-        //
-    }
-
-    public function edit(Game $game)
-    {
-        //
-    }
-
-    public function update(Request $request, Game $game)
-    {
-        //
     }
 
     // Delete all game history for player

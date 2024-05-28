@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\Auth\AuthenticatedUserController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\RankingController;
 
 // PROTECTED ROUTES
 Route::middleware('auth:api')->group(function () {
@@ -20,13 +21,7 @@ Route::middleware('auth:api')->group(function () {
 
     // ACCESSED BY MODERATOR & SUPER-ADMIN:
     // GET /players: retorna el llistat de tots els jugadors/es del sistema amb el seu percentatge mitjà d’èxits 
-    Route::get('/players', [UserController::class, 'index']);
-    // GET /players/ranking: retorna el rànquing mitjà de tots els jugadors/es del sistema. És a dir, el percentatge mitjà d’èxits.
-    Route::get('/players/ranking', [UserController::class, 'ranking']);
-    // GET /players/ranking/loser: retorna el jugador/a amb pitjor percentatge d’èxit.
-    Route::get('/players/ranking/loser', [UserController::class, 'worst']);
-    // GET /players/ranking/winner: retorna el jugador/a amb millor percentatge d’èxit.
-    Route::get('/players/ranking/winner', [UserController::class, 'best']);
+    Route::get('/players', [UserController::class, 'getAll']);
 });
 
 // PUBLIC ROUTES
@@ -34,6 +29,12 @@ Route::middleware('auth:api')->group(function () {
 Route::post('/players', [RegisteredUserController::class, 'register']);
 // POST /login : autentica un jugador/a.
 Route::post('/login', [AuthenticatedUserController::class, 'login']);
+// GET /players/ranking: retorna el rànquing mitjà de tots els jugadors/es del sistema. És a dir, el percentatge mitjà d’èxits.
+Route::get('/players/ranking', [RankingController::class, 'ranking']);
+// GET /players/ranking/loser: retorna el jugador/a amb pitjor percentatge d’èxit.
+Route::get('/players/ranking/loser', [RankingController::class, 'worstPlayer']);
+// GET /players/ranking/winner: retorna el jugador/a amb millor percentatge d’èxit.
+Route::get('/players/ranking/winner', [RankingController::class, 'bestPlayer']);
 
 
 // ENDPOINTS PER MILLORAR JOC:
