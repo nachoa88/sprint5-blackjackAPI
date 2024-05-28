@@ -13,10 +13,10 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/players/{id}', [UserController::class, 'update']);
     // GET /players/{id}/games: retorna el llistat de jugades per un jugador/a.
     Route::get('/players/{id}/games', [UserController::class, 'show']);
-    // POST /players/{id}/games/ : un jugador/a específic realitza una tirada dels daus.
+    // POST /players/{id}/games/ : un jugador/a específic comença una partida.
     Route::post('/players/{id}/games', [GameController::class, 'store']);
     // DELETE /players/{id}/games: elimina les tirades del jugador/a.
-    Route::delete('/players/{id}/games', [UserController::class, 'destroyGames']);
+    Route::delete('/players/{id}/games', [GameController::class, 'destroyAll']);
 
     // ACCESSED BY MODERATOR & SUPER-ADMIN:
     // GET /players: retorna el llistat de tots els jugadors/es del sistema amb el seu percentatge mitjà d’èxits 

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Game;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 
 class GameController extends Controller
 {
@@ -75,35 +77,40 @@ class GameController extends Controller
             'status' => 201
         ]);
     }
-    /**
-     * Display the specified resource.
-     */
+
     public function show(Game $game)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Game $game)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Game $game)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Game $game)
+    // Delete all game history for player
+    public function destroyAll($id): JsonResponse
     {
-        //
+        // Get the user by its UUID.
+        $user = User::findOrFail($id);
+
+        // Check if the authenticated user can delete the user's games, and has roles & permissions.
+        Gate::authorize('deleteAllGames', $user);
+
+        // Delete the user's games.
+        $user->games()->delete();
+
+        // Reset user stats for wins, losses and ties.
+        $user->wins = 0;
+        $user->losses = 0;
+        $user->ties = 0;
+        $user->save();
+
+        return response()->json(['message' => 'All games deleted successfully']);
     }
 }

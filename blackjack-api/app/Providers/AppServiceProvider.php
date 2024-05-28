@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Gate;
+use App\Models\User;
 use App\Models\Deck;
 
 class AppServiceProvider extends ServiceProvider
@@ -31,5 +33,15 @@ class AppServiceProvider extends ServiceProvider
         // https://spatie.be/docs/laravel-permission/v6/prerequisites
         Schema::defaultStringLength(125);
 
+        // If the user has the 'super-admin' role, allow all the actions except 'play game'.
+        Gate::before(function (User $user, string $ability) {
+            if ($user->hasRole('super-admin')) {
+                if ($ability === 'play game') {
+                    return false;
+                }
+
+                return true;
+            }
+        });
     }
 }

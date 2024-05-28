@@ -3,7 +3,9 @@ Utilitzat `docker compose` command amb el fitxer `docker-compose.yml` i un `Dock
 
 ### Laravel MVC
 ## Nivell 1 - Funcionalitats bàsiques + Seguretat + Testing
-1) Instal·lat passport amb `php artisan install:api --passport`i Spatie amb `composer require spatie/laravel-permission`, per ùltim he publicat la migració amb `php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"`. Com he escollit treballar amb UUID, s'han de fer viares modificacions, veure la documentació de Spatie. 
+1) Instal·lat passport amb `php artisan install:api --passport`i Spatie amb `composer require spatie/laravel-permission`, per ùltim he publicat la migració amb `php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"`. Com he escollit treballar amb UUID, s'han de fer viares modificacions, veure la documentació de Spatie.
+La estructura de dades compta amb les seves migracions i seeds per poder fer una prova del funcionament de la API.
+S'han definit els rols i permissos per cada endpoint. Hi ha un primer control general d'autenticació mitjançant el `middleware` i després un més específic amb `Policies`, en les quals es verifica si el usuari que vol accedir a l'endpoint té les acreditacions necessàries.
 
 2) ... Per fer: Testing
 

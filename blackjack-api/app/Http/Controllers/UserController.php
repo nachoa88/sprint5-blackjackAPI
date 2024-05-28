@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Game;
 use Illuminate\Http\JsonResponse;
 // use Illuminate\Http\Request;
 use App\Http\Requests\UpdateNicknameRequest;
@@ -81,31 +80,18 @@ class UserController extends Controller
         ]);
     }
 
-    // Delete all game history for player
-    public function destroyGames($id): JsonResponse
-    {
-        // Get the user by its UUID.
-        $user = User::findOrFail($id);
-
-        // Check if the authenticated user can delete the user's games, and has roles & permissions.
-        Gate::authorize('deleteGames', $user);
-
-        // Delete the user's games.
-        $user->games()->delete();
-
-        // Reset user stats for wins, losses and ties.
-        $user->wins = 0;
-        $user->losses = 0;
-        $user->ties = 0;
-        $user->save();
-
-        return response()->json(['message' => 'All games deleted successfully']);
+    // Delete a user
+    public function destroy($id): JsonResponse
+    {   
+        return response()->json([
+            'message' => 'Not implemented yet',
+        ]);
     }
 
     // Get the best player and its stats
     public function best(): JsonResponse
     {
-        Gate::authorize('viewAny', User::class);
+        // Gate::authorize('viewAny', User::class);
 
         $users = User::all();
         // Get the game stats for all the players.
@@ -127,7 +113,7 @@ class UserController extends Controller
     // Get the worst player and its stats
     public function worst(): JsonResponse
     {
-        Gate::authorize('viewAny', User::class);
+        // Gate::authorize('viewAny', User::class);
 
         $users = User::all();
         // Get the game stats for all the players.
