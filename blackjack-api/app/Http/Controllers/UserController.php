@@ -6,27 +6,31 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 // use Illuminate\Http\Request;
 use App\Http\Requests\UpdateNicknameRequest;
+use App\Services\GameService;
 use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
     // Show all players & their average win percentages
-    public function index(): JsonResponse
+    public function getAll(GameService $gameService): JsonResponse
     {
         // Check if the authenticated user has the role & permission to view players.
         Gate::authorize('viewAny', User::class);
 
-        // Tots els jugadors amb el seu percentatge mitjà d’èxits 
-        $users = User::all();
+        // Calculate the ranking of all the players using GameService.
+        $playersRanking = $gameService->calculateRanking();
 
-        // User helper function to calculate the game stats for all the players:
-        $stats = User::calculateTotalGameStats($users);
+        // Get the average win, tie and lose percentage for all the players.
+        $totalWinsAverage = round($playersRanking->avg('gameStats.win_percentage'), 2);
+        $totalTiesAverage = round($playersRanking->avg('gameStats.tie_percentage'), 2);
+        $totalLossesAverage = round($playersRanking->avg('gameStats.lose_percentage'), 2);
 
+        
         return response()->json([
-            'total_wins_average' => $stats['wins_average'],
-            'total_losses_average' => $stats['losses_average'],
-            'total_ties_average' => $stats['ties_average'],
-            'user_details' => $users,
+            'total_wins_average' => $totalWinsAverage,
+            'total_losses_average' => $totalLossesAverage,
+            'total_ties_average' => $totalTiesAverage,
+            'user_details' => $playersRanking,
         ]);
     }
 
@@ -82,53 +86,9 @@ class UserController extends Controller
 
     // Delete a user
     public function destroy($id): JsonResponse
-    {   
+    {
         return response()->json([
             'message' => 'Not implemented yet',
-        ]);
-    }
-
-    // Get the best player and its stats
-    public function best(): JsonResponse
-    {
-        // Gate::authorize('viewAny', User::class);
-
-        $users = User::all();
-        // Get the game stats for all the players.
-        foreach ($users as $user) {
-            $userStats = $user->game_stats;
-            $user->gameStats = $userStats;
-        }
-        // Get the user with the best win percentage.
-        $bestUser = $users->sortByDesc('gameStats.win_percentage')->first();
-
-        return response()->json([
-            'message' => 'Best player found successfully',
-            'user_nickname' => $bestUser->nickname,
-            'user_stats' => $bestUser->gameStats,
-            'user_details' => $bestUser,
-        ]);
-    }
-
-    // Get the worst player and its stats
-    public function worst(): JsonResponse
-    {
-        // Gate::authorize('viewAny', User::class);
-
-        $users = User::all();
-        // Get the game stats for all the players.
-        foreach ($users as $user) {
-            $userStats = $user->game_stats;
-            $user->gameStats = $userStats;
-        }
-        // Get the user with the worst win percentage.
-        $worstUser = $users->sortBy('gameStats.win_percentage')->first();
-
-        return response()->json([
-            'message' => 'Worst player found successfully',
-            'user_nickname' => $worstUser->nickname,
-            'user_stats' => $worstUser->gameStats,
-            'user_details' => $worstUser,
         ]);
     }
 }
