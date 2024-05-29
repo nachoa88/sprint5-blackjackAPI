@@ -7,7 +7,6 @@ use Illuminate\Auth\Access\Response;
 
 class UserPolicy
 {
- 
     public function viewAny(User $authenticatedUser): Response
     {
         // Check if the user has the 'moderator' role.
@@ -46,59 +45,52 @@ class UserPolicy
 
     public function update(User $authenticatedUser, User $user): Response
     {
-        // First, check if the authenticated user's UUID matches the user's UUID in the request.
         if ($authenticatedUser->uuid !== $user->uuid) {
             return Response::deny('Your UUID does not match the UUID in the request.');
         }
 
-        // Finally, check if the authenticated user has the 'player' role.
         if (!$authenticatedUser->hasRole('player')) {
             return Response::deny('You do not have the required role to edit players.');
         }
 
-        // Next, check if the authenticated user has the 'edit nickname' permission.
         if (!$authenticatedUser->hasPermissionTo('edit nickname')) {
             return Response::deny('You do not have the required permission to edit your nickname.');
         }
 
-        // If all checks pass, allow the action.
         return Response::allow();
     }
 
     public function deleteAllGames(User $authenticatedUser, User $user): Response
     {
-        // First, check if the authenticated user's UUID matches the user's UUID in the request.
         if ($authenticatedUser->uuid !== $user->uuid) {
             return Response::deny('Your UUID does not match the UUID in the request.');
         }
 
-        // Finally, check if the authenticated user has the 'player' role.
         if (!$authenticatedUser->hasRole('player')) {
             return Response::deny('You do not have the required role to delete the game history.');
         }
 
-        // Next, check if the authenticated user has the 'delete own game history' permission.
         if (!$authenticatedUser->hasPermissionTo('delete own game history')) {
             return Response::deny('You do not have the required permission to delete the game history.');
         }
 
-        // If all checks pass, allow the action.
         return Response::allow();
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, User $model)
+    public function playGames(User $authenticatedUser, User $user): Response
     {
-        //
-    }
+        if ($authenticatedUser->uuid !== $user->uuid) {
+            return Response::deny('Your UUID does not match the UUID in the request.');
+        }
 
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, User $model)
-    {
-        //
+        if (!$authenticatedUser->hasRole('player')) {
+            return Response::deny('You do not have the required role to create a game.');
+        }
+
+        if (!$authenticatedUser->hasPermissionTo('play game')) {
+            return Response::deny('You do not have the required permission to create a game.');
+        }
+
+        return Response::allow();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Controller;
+namespace Tests\Feature\Controllers;
 
 use Tests\TestCase;
 use App\Models\User;
@@ -81,11 +81,11 @@ class UserController extends TestCase
     // Test if the authenticated user doesn't have permission to update the nickname of a player.
     public function testUpdateWithoutPermission(): void
     {
-        // Login as a player.
-        $user = User::where('email', 'moderator@mail.com')->first();
-        $token = $user->createToken('loginToken')->accessToken;
+        // Login as a moderator.
+        $moderator = User::where('email', 'moderator@mail.com')->first();
+        $token = $moderator->createToken('loginToken')->accessToken;
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)->json('PUT', '/api/players/' . $user->uuid, [
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)->json('PUT', '/api/players/' . $moderator->uuid, [
             'nickname' => 'NewNickname',
         ]);
 

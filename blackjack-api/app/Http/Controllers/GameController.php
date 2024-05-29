@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
+use App\Services\GameService;
 
 class GameController extends Controller
 {
@@ -15,6 +16,8 @@ class GameController extends Controller
     {
         // Find the user.
         $user = User::findOrFail($id);
+
+        Gate::authorize('playGames', $user);
 
         // Create a new game with the user's UUID.
         $game = Game::factory()->create([
@@ -51,16 +54,18 @@ class GameController extends Controller
 
         return response()->json([
             'message' => 'Game created successfully',
-            'player_cards' => $game->player_hand,
-            'dealer_cards' => $game->dealer_hand,
-            'player_score' => $game->player_score,
-            'dealer_score' => $game->dealer_score,
+            'game_details' => [
+                'player_cards' => $game->player_hand,
+                'dealer_cards' => $game->dealer_hand,
+                'player_score' => $game->player_score,
+                'dealer_score' => $game->dealer_score,
+            ],
             'result' => $game->result,
         ], 201);
     }
 
-    // Show info of one player
-    public function show($id): JsonResponse
+    // Show game info of one player
+    public function show($id, GameService $gameService): JsonResponse
     {
         // Get the user by its UUID.
         $user = User::findOrFail($id);
@@ -81,10 +86,12 @@ class GameController extends Controller
             ];
         });
 
+        $userStats = $gameService->getGameStats($user);
+
         // Return the info of the games of the user.
         return response()->json([
             'user_nickname' => $user->nickname,
-            'game_stats' => $user->game_stats,
+            'game_stats' => $userStats,
             'games' => $gamesData
         ], 200);
     }
