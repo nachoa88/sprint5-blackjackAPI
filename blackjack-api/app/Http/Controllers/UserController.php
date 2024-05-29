@@ -31,37 +31,7 @@ class UserController extends Controller
             'total_losses_average' => $totalLossesAverage,
             'total_ties_average' => $totalTiesAverage,
             'user_details' => $playersRanking,
-        ]);
-    }
-
-    // Show info of one player
-    public function show($id): JsonResponse
-    {
-        // Get the user by its UUID.
-        $user = User::findOrFail($id);
-
-        Gate::authorize('view', $user);
-
-        // Get the games of the user.
-        $user->load('games');
-
-        // Prepare the games data. (This maybe could be done with a Resource to prepare Game Data)
-        $gamesData = $user->games->map(function ($game) {
-            return [
-                'player_hand' => json_decode($game->player_hand),
-                'dealer_hand' => json_decode($game->dealer_hand),
-                'player_score' => $game->player_score,
-                'dealer_score' => $game->dealer_score,
-                'result' => $game->result,
-            ];
-        });
-
-        // Return the info of the games of the user.
-        return response()->json([
-            'user_nickname' => $user->nickname,
-            'game_stats' => $user->game_stats,
-            'games' => $gamesData
-        ]);
+        ], 200);
     }
 
     // Update Nickname for player
@@ -81,7 +51,7 @@ class UserController extends Controller
         return response()->json([
             'message' => 'Nickname modified successfully',
             'new nickname' => $user->nickname
-        ]);
+        ], 200);
     }
 
     // Delete a user
@@ -89,6 +59,6 @@ class UserController extends Controller
     {
         return response()->json([
             'message' => 'Not implemented yet',
-        ]);
+        ], 501);
     }
 }

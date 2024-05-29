@@ -19,7 +19,7 @@ class RankingController extends Controller
         return response()->json([
             'message' => 'Ranking found successfully',
             'ranking' => $playersRanking,
-        ]);
+        ], 200);
     }
 
     // Get the best player and its stats
@@ -33,7 +33,7 @@ class RankingController extends Controller
             'message' => 'Best player found successfully',
             'user_nickname' => $bestUser->nickname,
             'user_stats' => $bestUser->gameStats,
-        ]);
+        ], 200);
     }
 
     // Get the worst player and its stats
@@ -47,6 +47,6 @@ class RankingController extends Controller
             'message' => 'Worst player found successfully',
             'user_nickname' => $worstUser->nickname,
             'user_stats' => $worstUser->gameStats,
-        ]);
+        ], 200);
     }
 }

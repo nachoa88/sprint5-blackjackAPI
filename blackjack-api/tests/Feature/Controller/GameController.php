@@ -2,19 +2,26 @@
 
 namespace Tests\Feature\Controller;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\Models\User;
 
 class GameController extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
-    {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-    }
+     // FUNCTION TO TEST: show
+    //  public function testShow(): void
+    //  {
+    //      // Login as a player.
+    //      $user = User::where('email', 'test@mail.com')->first();
+    //      $token = $user->createToken('loginToken')->accessToken;
+ 
+    //      $response = $this->withHeader('Authorization', 'Bearer ' . $token)->json('GET', '/api/players/' . $user->id . '/games');
+ 
+    //      $response
+    //          ->assertStatus(200) // STATUS 200 -> OK
+    //          ->assertJsonStructure([
+    //              'user_nickname',
+    //              'game_stats',
+    //              'games',
+    //          ]);
+    //  }
 }
