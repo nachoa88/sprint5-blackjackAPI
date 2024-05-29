@@ -2,10 +2,7 @@
 
 namespace Tests\Feature\Controller\Auth;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Illuminate\Support\Str;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -22,7 +19,7 @@ class RegisteredUserController extends TestCase
 
         $response = $this->json('POST', '/api/players', $payload);
         $response
-            ->assertStatus(201)
+            ->assertStatus(201) // STAUTUS 201 -> CREATED
             ->assertJsonStructure([
                 'message',
             ]);
@@ -37,13 +34,92 @@ class RegisteredUserController extends TestCase
         ]);
         // Check the password separately because the the result of Hash::check is a boolean.
         $this->assertTrue(Hash::check($payload['password'], User::first()->password));
+        // And check if the user has the 'player' role (default role in controller)
+        $this->assertTrue(User::where('email', $payload['email'])->first()->hasRole('player'));
     }
 
-    // Tests to-do:
-    // 1. Test that the user is not created if the email is already in use.
-    // 2. Test that the user is not created if the email is not valid.
-    // 3. Test that the user is not created if the password is less than 8 characters.
-    // 4. Test that the user is not created if the nickname is not unique.
-    // 5. Test that the user's nickname is 'Anonymous' if it is not provided.
-    // 6. Test that the user is created with the default role 'player'.
+    // Test that the user is not created if the email is already in use.
+    public function testEmailAlreadyInUse(): void
+    {
+        $payload = [
+            'nickname' => fake()->userName(),
+            'email' => 'test@mail.com',
+            'password' => '12345678',
+        ];
+
+        $response = $this->json('POST', '/api/players', $payload);
+        $response
+            ->assertStatus(422) // STATUS 422 -> UNPROCESSABLE ENTITY
+            ->assertJsonStructure([
+                'message',
+            ]);
+    }
+    // Test that the user is not created if the email is not valid.
+    public function testInvalidEmail(): void
+    {
+        $payload = [
+            'nickname' => fake()->userName(),
+            'email' => 'testmail.com',
+            'password' => '12345678',
+        ];
+
+        $response = $this->json('POST', '/api/players', $payload);
+        $response
+            ->assertStatus(422) // STATUS 422 -> UNPROCESSABLE ENTITY
+            ->assertJsonStructure([
+                'message',
+            ]);
+    }
+
+    // Test that the user is not created if the password is less than 8 characters.
+    public function testPasswordTooShort(): void
+    {
+        $payload = [
+            'nickname' => fake()->userName(),
+            'email' => fake()->unique()->safeEmail(),
+            'password' => '1234567',
+        ];
+
+        $response = $this->json('POST', '/api/players', $payload);
+        $response
+            ->assertStatus(422) // STATUS 422 -> UNPROCESSABLE ENTITY
+            ->assertJsonStructure([
+                'message',
+            ]);
+    }
+
+    // Test that the user is not created if the nickname is not unique.
+    public function testNicknameNotUnique(): void
+    {
+        $payload = [
+            'nickname' => 'TestUser',
+            'email' => fake()->unique()->safeEmail(),
+            'password' => '12345678',
+        ];
+
+        $response = $this->json('POST', '/api/players', $payload);
+
+        $response
+            ->assertStatus(422) // STATUS 422 -> UNPROCESSABLE ENTITY
+            ->assertJsonStructure([
+                'message',
+            ]);
+    }
+
+    // Test that the user's nickname is 'Anonymous' if it is not provided.
+    public function testAnonymousNickname(): void
+    {
+        $payload = [
+            'email' => fake()->unique()->safeEmail(),
+            'password' => '12345678',
+        ];
+
+        $response = $this->json('POST', '/api/players', $payload);
+
+        $response
+            ->assertStatus(201) // STATUS 201 -> CREATED
+            ->assertJsonStructure([
+                'message',
+            ]);
+    }
 }

@@ -2,8 +2,6 @@
 
 namespace Tests\Feature\Controller\Auth;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class AuthenticatedUserController extends TestCase
