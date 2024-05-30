@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('games', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('user_uuid')->constrained('users', 'uuid');
+            $table->foreignUuid('user_uuid')->constrained('users', 'uuid')->cascadeOnDelete();
             $table->foreignId('deck_id')->constrained();
             $table->json('player_hand')->nullable();
             $table->json('dealer_hand')->nullable();

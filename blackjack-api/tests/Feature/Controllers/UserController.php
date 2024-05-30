@@ -171,4 +171,60 @@ class UserController extends TestCase
                 'nickname',
             ]);
     }
+
+    // FUNCTION TO TEST: destroy
+    public function testDestroy(): void
+    {
+        // Login as a super-admin.
+        $superAdmin = User::where('email', 'superadmin@mail.com')->first();
+        $token = $superAdmin->createToken('loginToken')->accessToken;
+        // Get a user to delete
+        $testUser = User::where('email', 'test@mail.com')->first();
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)->json('DELETE', '/api/players/' . $testUser->uuid);
+
+        $response
+            ->assertStatus(200) // STATUS 200 -> OK
+            ->assertJsonStructure([
+                'message',
+            ]);
+
+        // Check that the user was deleted.
+        $this->assertDatabaseMissing('users', [
+            'uuid' => $testUser->uuid,
+        ]);
+
+        // Check that no games are associated with the user.
+        $this->assertDatabaseMissing('games', [
+            'user_uuid' => $testUser->uuid,
+        ]);
+    }
+
+    // Test if the authenticated user doesn't have permission to delete a player.
+    public function testDestroyWithoutPermission(): void
+    {
+        // Login as a moderator.
+        $moderator = User::where('email', 'moderator@mail.com')->first();
+        $token = $moderator->createToken('loginToken')->accessToken;
+
+        // Get a user to delete
+        $testUser = User::where('email', 'test@mail.com')->first();
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)->json('DELETE', '/api/players/' . $testUser->uuid);
+
+        $response
+            ->assertStatus(403); // STATUS 403 -> FORBIDDEN
+    }
+
+    // Test if the user is not authenticated to delete a player.
+    public function testDestroyWithoutAuthentication(): void
+    {
+        // Get a user to delete
+        $testUser = User::where('email', 'test@mail.com')->first();
+
+        $response = $this->json('DELETE', '/api/players/' . $testUser->uuid);
+
+        $response
+            ->assertStatus(401); // STATUS 401 -> UNAUTHORIZED
+    }
 }
