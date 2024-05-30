@@ -13,7 +13,7 @@ Route::middleware('auth:api')->group(function () {
     // PUT /players/{id} : modifica el nom del jugador/a.
     Route::put('/players/{id}', [UserController::class, 'update']);
     // GET /players/{id}/games: retorna el llistat de jugades per un jugador/a.
-    Route::get('/players/{id}/games', [UserController::class, 'show']);
+    Route::get('/players/{id}/games', [GameController::class, 'show']);
     // POST /players/{id}/games/ : un jugador/a específic comença una partida.
     Route::post('/players/{id}/games', [GameController::class, 'store']);
     // DELETE /players/{id}/games: elimina les tirades del jugador/a.

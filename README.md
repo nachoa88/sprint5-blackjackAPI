@@ -7,7 +7,7 @@ Utilitzat `docker compose` command amb el fitxer `docker-compose.yml` i un `Dock
 La estructura de dades compta amb les seves migracions i seeds per poder fer una prova del funcionament de la API.
 S'han definit els rols i permissos per cada endpoint. Hi ha un primer control general d'autenticació mitjançant el `middleware` i després un més específic amb `Policies`, en les quals es verifica si el usuari que vol accedir a l'endpoint té les acreditacions necessàries.
 
-2) ... Per fer: Testing
+2) Testing: Modificat `phpunit.xml` per utilitzar `SQLite` per fer els tests. També s'han afegit algunes dades en `TestCase.php` per fer servir el trait `RefreshDatabase` que farà les migracions, el `$seed` i `accessToken`. La estructura dels tests serà la mateixa que els controllers (Controllers, Controllers/Auth, etc.).      
 
 ## Nivell 2 - Documentació + deploy
 1) ... Per fer: Documentació API.
