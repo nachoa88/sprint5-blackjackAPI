@@ -151,4 +151,65 @@ class GameController extends TestCase
     }
 
     // FUNCTION TO TEST: destroyAll
+    public function testDestroyAll(): void
+    {
+        // Login as a player.
+        $user = User::where('email', 'test@mail.com')->first();
+        $token = $user->createToken('loginToken')->accessToken;
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)->json('DELETE', '/api/players/' . $user->uuid . '/games');
+
+        $response
+            ->assertStatus(200) // STATUS 200 -> OK
+            ->assertJsonStructure([
+                'message',
+            ]);
+
+        // Check if the user's games were deleted.
+        $this->assertDatabaseMissing('games', [
+            'user_uuid' => $user->uuid,
+        ]);
+
+        // Check if stats for wins, losses and ties were reset.
+        $this->assertDatabaseHas('users', [
+            'uuid' => $user->uuid,
+            'wins' => 0,
+            'losses' => 0,
+            'ties' => 0,
+        ]);
+    }
+
+    // This test checks if the uuid of the user doesn't match the authenticated user.
+    public function testDestroyAllWithDifferentUuid(): void
+    {
+        // Login as a player.
+        $user = User::where('email', 'test@mail.com')->first();
+        $token = $user->createToken('loginToken')->accessToken;
+
+        $moderator = User::where('email', 'moderator@mail.com')->first();
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)->json('DELETE', '/api/players/' . $moderator->uuid . '/games');
+
+        $response->assertStatus(403); // STATUS 403 -> FORBIDDEN
+    }
+
+    // This tests cheks if the user has not the necessary role (player).
+    public function testDestroyAllWithUnauthorizedUser(): void
+    {
+        // Login as a moderator.
+        $moderator = User::where('email', 'moderator@mail.com')->first();
+        $token = $moderator->createToken('loginToken')->accessToken;
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)->json('DELETE', '/api/players/' . $moderator->uuid . '/games');
+
+        $response->assertStatus(403); // STATUS 403 -> FORBIDDEN
+    }
+
+    //  This tests cheks if the user is not authenticated.
+    public function testDestroyAllUnauthenticated(): void
+    {
+        $response = $this->json('DELETE', '/api/players/1/games');
+
+        $response->assertStatus(401); // STATUS 401 -> UNAUTHORIZED
+    }
 }
