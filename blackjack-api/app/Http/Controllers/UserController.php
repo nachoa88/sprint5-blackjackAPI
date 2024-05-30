@@ -54,11 +54,17 @@ class UserController extends Controller
         ], 200);
     }
 
-    // Delete a user
+    // Delete a user by its UUID
     public function destroy($id): JsonResponse
     {
+        Gate::authorize('deleteUser', User::class);
+        
+        $userToDelete = User::findOrFail($id);
+        
+        $userToDelete->delete();
+
         return response()->json([
-            'message' => 'Not implemented yet',
-        ], 501);
+            'message' => 'User deleted successfully',
+        ], 200);
     }
 }

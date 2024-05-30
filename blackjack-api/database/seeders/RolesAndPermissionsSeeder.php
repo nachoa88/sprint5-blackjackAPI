@@ -19,6 +19,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::factory()->create(['name' => 'play game']);
         Permission::factory()->create(['name' => 'delete own game history']);
         Permission::factory()->create(['name' => 'view own details']);
+        Permission::factory()->create(['name' => 'delete user']);
 
         // MODERATORS
         Permission::factory()->create(['name' => 'view players']);

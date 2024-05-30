@@ -93,4 +93,17 @@ class UserPolicy
 
         return Response::allow();
     }
+
+    public function deleteUser(User $authenticatedUser): Response
+    {
+        if (!$authenticatedUser->hasRole('super-admin')) {
+            return Response::deny('You do not have the required role to delete users.');
+        }
+
+        if (!$authenticatedUser->hasPermissionTo('delete users')) {
+            return Response::deny('You do not have the required permission to delete users.');
+        }
+
+        return Response::allow();
+    }
 }

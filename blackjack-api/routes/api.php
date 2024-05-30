@@ -22,6 +22,8 @@ Route::middleware('auth:api')->group(function () {
     // ACCESSED BY MODERATOR & SUPER-ADMIN:
     // GET /players: retorna el llistat de tots els jugadors/es del sistema amb el seu percentatge mitjà d’èxits 
     Route::get('/players', [UserController::class, 'getAll']);
+    // DELETE /players/{id}: elimina un jugador/a del sistema.
+    Route::delete('/players/{id}', [UserController::class, 'destroy']);
 });
 
 // PUBLIC ROUTES
