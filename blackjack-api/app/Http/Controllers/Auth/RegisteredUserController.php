@@ -12,6 +12,29 @@ use Illuminate\Support\Str;
 class RegisteredUserController extends Controller
 {
 
+    /**
+     * @OA\Post(
+     *     path="/players",
+     *     tags={"Auth"},
+     *     summary="Register player",
+     *     description="This is the endpoint to create and register a new player.",
+     *     operationId="registerPlayer",
+     *     @OA\Response(
+     *         response=201,
+     *         description="Player created successfully"
+     *     ),
+     *     @OA\RequestBody(
+     *         description="Player registration details",
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="nickname", type="string"),
+     *             @OA\Property(property="email", type="string", format="email"),
+     *             @OA\Property(property="password", type="string", format="password")
+     *         )
+     *     )
+     * )
+     */
     public function register(RegisterRequest $request)
     {
         $request->validated();
@@ -29,6 +52,6 @@ class RegisteredUserController extends Controller
         // This can be solved by changing the default guard in the config/auth.php file and then:
         $user->assignRole('player');
 
-        return response()->json(['message' => 'User created successfully'], 201);
+        return response()->json(['message' => 'Player created successfully'], 201);
     }
 }
