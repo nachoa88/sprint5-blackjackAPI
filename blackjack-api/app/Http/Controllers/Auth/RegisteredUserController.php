@@ -15,14 +15,10 @@ class RegisteredUserController extends Controller
     /**
      * @OA\Post(
      *     path="/players",
-     *     tags={"Auth"},
-     *     summary="Register player",
+     *     tags={"Register"},
+     *     summary="Register a new player",
      *     description="This is the endpoint to create and register a new player.",
      *     operationId="registerPlayer",
-     *     @OA\Response(
-     *         response=201,
-     *         description="Player created successfully"
-     *     ),
      *     @OA\RequestBody(
      *         description="Player registration details",
      *         required=true,
@@ -31,6 +27,14 @@ class RegisteredUserController extends Controller
      *             @OA\Property(property="nickname", type="string"),
      *             @OA\Property(property="email", type="string", format="email"),
      *             @OA\Property(property="password", type="string", format="password")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Player created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Player created successfully"),
+     *             @OA\Property(property="uuid", type="string", example="3fa85f64-5717-4562-b3fc-2c963f66afa6"),
      *         )
      *     )
      * )
@@ -52,6 +56,9 @@ class RegisteredUserController extends Controller
         // This can be solved by changing the default guard in the config/auth.php file and then:
         $user->assignRole('player');
 
-        return response()->json(['message' => 'Player created successfully'], 201);
+        return response()->json([
+            'message' => 'Player created successfully',
+            'uuid' => $user->uuid,
+        ], 201);
     }
 }

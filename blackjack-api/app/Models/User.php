@@ -3,13 +3,25 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+
+/**
+ * @OA\Schema(
+ *     schema="User",
+ *     type="object",
+ *     @OA\Property(property="uuid", type="string", description="The unique identifier of the user"),
+ *     @OA\Property(property="nickname", type="string", description="The nickname of the user"),
+ *     @OA\Property(property="email", type="string", description="The email of the user"),
+ *     @OA\Property(property="wins", type="integer", description="The number of wins of the user"),
+ *     @OA\Property(property="losses", type="integer", description="The number of losses of the user"),
+ *     @OA\Property(property="ties", type="integer", description="The number of ties of the user"),
+ * )
+ */
 
 class User extends Authenticatable
 {
