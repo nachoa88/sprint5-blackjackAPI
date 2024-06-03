@@ -142,6 +142,51 @@ class UserController extends Controller
         ], 200);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/players/{id}",
+     *     tags={"Users"},
+     *     summary="Delete a user",
+     *     description="This endpoint deletes a user by its UUID. Only authenticated users with the appropriate permissions can access this endpoint.",
+     *     operationId="deleteUser",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="UUID of the user to delete",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="User deleted successfully"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Forbidden"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Not Found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="User not found"),
+     *         )
+     *     ),
+     * )
+     */
     // Delete a user by its UUID
     public function destroy($id): JsonResponse
     {

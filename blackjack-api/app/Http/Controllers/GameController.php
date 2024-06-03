@@ -11,6 +11,60 @@ use App\Services\GameService;
 
 class GameController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/players/{id}/games",
+     *     tags={"Games"},
+     *     summary="Create a new game for a player",
+     *     description="This endpoint creates a new game for a player by their UUID. Only authenticated players can access this endpoint.",
+     *     operationId="createGame",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="UUID of the player to create a game for",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Game created successfully"),
+     *             @OA\Property(
+     *                 property="game_details",
+     *                 type="object",
+     *                 @OA\Property(property="player_cards", type="array", @OA\Items(type="string")),
+     *                 @OA\Property(property="dealer_cards", type="array", @OA\Items(type="string")),
+     *                 @OA\Property(property="player_score", type="integer"),
+     *                 @OA\Property(property="dealer_score", type="integer"),
+     *             ),
+     *             @OA\Property(property="result", type="string", example="win"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Forbidden"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Not Found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Player not found"),
+     *         )
+     *     ),
+     * )
+     */
     // Create a new game for the player
     public function store(Request $request, $id): JsonResponse
     {
@@ -64,6 +118,59 @@ class GameController extends Controller
         ], 201);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/players/{id}/games",
+     *     tags={"Games"},
+     *     summary="Show game info of a player",
+     *     description="This endpoint returns the game info of a player by their UUID. Only authenticated users can access this endpoint.",
+     *     operationId="showGame",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="UUID of the player to retrieve game info for",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="player_hand", type="array", @OA\Items(type="string")),
+     *                 @OA\Property(property="dealer_hand", type="array", @OA\Items(type="string")),
+     *                 @OA\Property(property="player_score", type="integer"),
+     *                 @OA\Property(property="dealer_score", type="integer"),
+     *                 @OA\Property(property="result", type="string", example="win"),
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Forbidden"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Not Found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Player not found"),
+     *         )
+     *     ),
+     * )
+     */
     // Show game info of one player
     public function show($id, GameService $gameService): JsonResponse
     {
@@ -96,6 +203,52 @@ class GameController extends Controller
         ], 200);
     }
 
+
+    /**
+     * @OA\Delete(
+     *     path="/players/{id}/games",
+     *     tags={"Games"},
+     *     summary="Delete all game history for a player",
+     *     description="This endpoint deletes all game history for a player by their UUID. Only authenticated users with the appropriate permissions can access this endpoint.",
+     *     operationId="deleteAllGames",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="UUID of the player to delete game history for",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="All games deleted successfully"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthorized"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Forbidden"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Not Found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Player not found"),
+     *         )
+     *     ),
+     * )
+     */
     // Delete all game history for player
     public function destroyAll($id): JsonResponse
     {
