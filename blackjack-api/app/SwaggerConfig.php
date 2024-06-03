@@ -39,6 +39,10 @@ use OpenApi\Annotations as OA;
  *     name="Games",
  *     description="API Endpoints of Games"
  * )
+ * @OA\Tag(
+ *     name="Ranking",
+ *     description="API Endpoints of Games"
+ * )
  */
 
 class SwaggerConfig

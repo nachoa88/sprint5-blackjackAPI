@@ -10,25 +10,26 @@ S'han definit els rols i permissos per cada endpoint. Hi ha un primer control ge
 2) Testing: Modificat `phpunit.xml` per utilitzar `SQLite` per fer els tests. També s'han afegit algunes dades en `TestCase.php` per fer servir el trait `RefreshDatabase` que farà les migracions, el `$seed` i `accessToken`. La estructura dels tests serà la mateixa que els controllers (Controllers, Controllers/Auth, etc.).      
 
 ## Nivell 2 - Documentació + deploy
-1) ... Per fer: Documentació API.
-2) ... Per fer: Deploy API.
+1) Documentada l'API amb `Swagger`, feta una configuració bàsica per definir info, server, security schema i tags. També he afegit els schemas pels models d'usuaris i games.
+2) Pendent: Deploy API.
 
 ## Nivell 3 - Desplegar projecte + client front-end
-1) ...
+1) Pendent: Producció.
+2) Pendent: Front-End.
 
 
 ## Fet amb Blackjack enlloc de daus
-#### Basic rules of Blackjack:
-- The game is played between a dealer and one or more players. Each player plays individually against the dealer. For now, we allow only one player.
+#### Regles bàsiques de Blackjack:
+- El joc es juga entre un crupier i un o més jugadors. Cada jugador juga individualment contra el crupier. De moment, només permetem un jugador.
 
-- At the start of the game, the dealer deals two cards to each player and two cards to themselves. 
+- Al començament del joc, el crupier reparteix dues cartes a cada jugador i dues cartes a ell mateix (ara mateix, només es pot jugar 1 vs crupier).
 
-- The goal of the game is to have the total value of your cards be as close to 21 as possible without going over. The value of a hand is the sum of the values of the individual cards. Numbered cards (2-10) are worth their face value, face cards (Jack, Queen, King) are worth 10, and Aces can be worth either 1 or 11, whichever is more beneficial to the player.
+- L'objectiu del joc és que el valor total de les teves cartes sigui el més proper possible a 21 sense passar-se. El valor d'una mà és la suma dels valors de les cartes individuals. Les cartes numerades (2-10) valen el seu valor facial, les cartes de figura (Sota, Reina, Rei) valen 10, i els Asos poden valer 1 o 11, el que sigui més beneficiós per al jugador.
 
-- If a player's total is higher than the dealer's (or if the dealer busts), the player wins. If the dealer's total is higher, the player loses. In case of a tie, the player neither wins nor loses (it's a "push").
+- Si el total d'un jugador és més alt que el del crupier (o si el crupier es passa), el jugador guanya. Si el total del crupier és més alt, el jugador perd. En cas d'empat, el jugador ni guanya ni perd (és un "empat").
 
 
-Possible features: 
-- One of the dealer's cards is dealt face up, and the other is dealt face down.
-- After the initial deal, each player has the option to "hit" (take another card) or "stand" (take no more cards). Players can hit as many times as they want until they either stand or "bust" (go over 21).
-- Once all players have finished their turns, the dealer reveals their hidden card and must hit until their total is 17 or higher.
+Característiques possibles:
+- Una de les cartes del crupier es reparteix boca amunt, i l'altra es reparteix boca avall.
+- Després de la repartició inicial, cada jugador té l'opció de "pedir" (agafar una altra carta) o "plantar-se" (no agafar més cartes). Els jugadors poden pedir tantes vegades com vulguin fins que es planten o es "passen" (superen 21).
+- Un cop tots els jugadors han acabat els seus torns, el crupier revela la seva carta oculta i ha de pedir fins que el seu total sigui 17 o més alt.

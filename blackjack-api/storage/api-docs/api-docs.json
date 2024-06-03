@@ -540,6 +540,197 @@
                 ]
             }
         },
+        "/players/ranking": {
+            "get": {
+                "tags": [
+                    "Ranking"
+                ],
+                "summary": "Get the ranking of all players",
+                "description": "This endpoint returns the ranking of all players. It is a public endpoint and does not require authentication.",
+                "operationId": "getRanking",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ranking found successfully"
+                                        },
+                                        "ranking": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "nickname": {
+                                                        "type": "string"
+                                                    },
+                                                    "gameStats": {
+                                                        "properties": {
+                                                            "win_percentage": {
+                                                                "type": "number"
+                                                            },
+                                                            "tie_percentage": {
+                                                                "type": "number"
+                                                            },
+                                                            "lose_percentage": {
+                                                                "type": "number"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ranking not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/players/ranking/winner": {
+            "get": {
+                "tags": [
+                    "Ranking"
+                ],
+                "summary": "Get the best player and its stats",
+                "description": "This endpoint returns the best player and their stats. It is a public endpoint and does not require authentication.",
+                "operationId": "getBestPlayer",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Best player found successfully"
+                                        },
+                                        "user_nickname": {
+                                            "type": "string"
+                                        },
+                                        "user_stats": {
+                                            "properties": {
+                                                "win_percentage": {
+                                                    "type": "number"
+                                                },
+                                                "tie_percentage": {
+                                                    "type": "number"
+                                                },
+                                                "lose_percentage": {
+                                                    "type": "number"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Player not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/players/ranking/loser": {
+            "get": {
+                "tags": [
+                    "Ranking"
+                ],
+                "summary": "Get the worst player and its stats",
+                "description": "This endpoint returns the worst player and their stats. It is a public endpoint and does not require authentication.",
+                "operationId": "getWorstPlayer",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Worst player found successfully"
+                                        },
+                                        "user_nickname": {
+                                            "type": "string"
+                                        },
+                                        "user_stats": {
+                                            "properties": {
+                                                "win_percentage": {
+                                                    "type": "number"
+                                                },
+                                                "tie_percentage": {
+                                                    "type": "number"
+                                                },
+                                                "lose_percentage": {
+                                                    "type": "number"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Player not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/players/{id}": {
             "put": {
                 "tags": [
@@ -839,6 +1030,10 @@
         },
         {
             "name": "Games",
+            "description": "API Endpoints of Games"
+        },
+        {
+            "name": "Ranking",
             "description": "API Endpoints of Games"
         }
     ]
