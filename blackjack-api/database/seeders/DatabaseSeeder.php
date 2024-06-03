@@ -42,7 +42,7 @@ class DatabaseSeeder extends Seeder
 
         // Create a user with the 'super-admin' role
         $superAdmin = User::factory()->create([
-            'nickname' => 'Super Admin',
+            'nickname' => 'SuperAdmin',
             'email' => 'superadmin@mail.com',
             'password' => '123456789',
         ]);
@@ -55,5 +55,13 @@ class DatabaseSeeder extends Seeder
             'password' => '123456789',
         ]);
         $moderator->assignRole('moderator');
+
+        // Create a test user with the 'player' role
+        $testUser = User::factory()->create([
+            'nickname' => 'TestUser',
+            'email' => 'test@mail.com',
+            'password' => '123456789',
+        ]);
+        $testUser->assignRole('player');
     }
 }
