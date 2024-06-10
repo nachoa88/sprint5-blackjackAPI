@@ -4,14 +4,13 @@ namespace Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use App\Models\User;
 
 abstract class TestCase extends BaseTestCase
 {
     // This execute migrations before testing???
     use RefreshDatabase;
 
-    // What is this???
+    // This is to seed the database before running each test.
     protected $seed = true;
     protected $accessToken = true;
 

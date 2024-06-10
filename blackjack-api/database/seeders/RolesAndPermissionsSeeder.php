@@ -36,5 +36,7 @@ class RolesAndPermissionsSeeder extends Seeder
         // SUPER-ADMIN
         $role = Role::factory()->create(['name' => 'super-admin']);
         $role->givePermissionTo(Permission::all());
+        // Super-admin can't play the game:
+        $role->revokePermissionTo('play game');
     }
 }
