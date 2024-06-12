@@ -68,8 +68,14 @@ class GameController extends Controller
     // Create a new game for the player
     public function store(Request $request, $id): JsonResponse
     {
-        // Find the user.
-        $user = User::findOrFail($id);
+        // Get the user by its UUID.
+        $user = User::find($id);
+        // To avoid giving information to the users when uuid doesn't exist, changed findOrFail method to find.
+        if (!$user) {
+            return response()->json([
+                'message' => 'Your UUID does not match the UUID in the request.',
+            ], 403);
+        }
 
         Gate::authorize('playGames', $user);
 
@@ -175,7 +181,13 @@ class GameController extends Controller
     public function show($id, GameService $gameService): JsonResponse
     {
         // Get the user by its UUID.
-        $user = User::findOrFail($id);
+        $user = User::find($id);
+        // To avoid giving information to the users when uuid doesn't exist, changed findOrFail method to find.
+        if (!$user) {
+            return response()->json([
+                'message' => 'Your UUID does not match the UUID in the request.',
+            ], 403);
+        }
 
         Gate::authorize('view', $user);
 
@@ -253,7 +265,13 @@ class GameController extends Controller
     public function destroyAll($id): JsonResponse
     {
         // Get the user by its UUID.
-        $user = User::findOrFail($id);
+        $user = User::find($id);
+        // To avoid giving information to the users when uuid doesn't exist, changed findOrFail method to find.
+        if (!$user) {
+            return response()->json([
+                'message' => 'Your UUID does not match the UUID in the request.',
+            ], 403);
+        }
 
         // Check if the authenticated user can delete the user's games, and has roles & permissions.
         Gate::authorize('deleteAllGames', $user);

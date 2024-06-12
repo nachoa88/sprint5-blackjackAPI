@@ -126,7 +126,13 @@ class UserController extends Controller
     public function update(UpdateNicknameRequest $request, $id): JsonResponse
     {
         // Get the user by its UUID.
-        $user = User::findOrFail($id);
+        $user = User::find($id);
+        // To avoid giving information to the users when uuid doesn't exist, changed findOrFail method to find.
+        if (!$user) {
+            return response()->json([
+                'message' => 'Your UUID does not match the UUID in the request.',
+            ], 403);
+        }
 
         // Check if the authenticated user can update the user, and has roles & permissions.
         Gate::authorize('update', $user);
@@ -190,9 +196,16 @@ class UserController extends Controller
     // Delete a user by its UUID
     public function destroy($id): JsonResponse
     {
-        Gate::authorize('deleteUser', User::class);
+        // Get the user by its UUID.
+        $userToDelete = User::find($id);
+        // To avoid giving information to the users when uuid doesn't exist, changed findOrFail method to find.
+        if (!$userToDelete) {
+            return response()->json([
+                'message' => 'Cannot process the request, check the UUID provided.',
+            ], 403);
+        }
 
-        $userToDelete = User::findOrFail($id);
+        Gate::authorize('deleteUser', $userToDelete);
 
         $userToDelete->delete();
 

@@ -5,7 +5,7 @@ namespace Tests\Feature\Controllers;
 use Tests\TestCase;
 use App\Models\User;
 
-class GameController extends TestCase
+class GameControllerTest extends TestCase
 {
     // FUNCTION TO TEST: store
     public function testStore(): void

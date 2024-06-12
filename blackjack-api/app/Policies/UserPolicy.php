@@ -94,13 +94,17 @@ class UserPolicy
         return Response::allow();
     }
 
-    public function deleteUser(User $authenticatedUser): Response
+    public function deleteUser(User $authenticatedUser, User $user): Response
     {
+        if ($authenticatedUser->uuid === $user->uuid) {
+            return Response::deny('You cannot delete your own account.');
+        }
+
         if (!$authenticatedUser->hasRole('super-admin')) {
             return Response::deny('You do not have the required role to delete users.');
         }
 
-        if (!$authenticatedUser->hasPermissionTo('delete users')) {
+        if (!$authenticatedUser->hasPermissionTo('delete user')) {
             return Response::deny('You do not have the required permission to delete users.');
         }
 
