@@ -5,7 +5,7 @@ namespace Tests\Feature\Controllers;
 use Tests\TestCase;
 use App\Models\User;
 
-class UserController extends TestCase
+class UserControllerTest extends TestCase
 {
     // FUNCTION TO TEST: getAll
     // Test if the authenticated user can get all players.
@@ -226,5 +226,26 @@ class UserController extends TestCase
 
         $response
             ->assertStatus(401); // STATUS 401 -> UNAUTHORIZED
+    }
+
+    // Test if the super-admin tries to delete itself.
+    public function testDestroySuperAdmin(): void
+    {
+        // Login as a super-admin.
+        $superAdmin = User::where('email', 'superadmin@mail.com')->first();
+        $token = $superAdmin->createToken('loginToken')->accessToken;
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)->json('DELETE', '/api/players/' . $superAdmin->uuid);
+
+        $response
+            ->assertStatus(403) // STATUS 403 -> Forbidden
+            ->assertJsonStructure([
+                'message',
+            ]);
+
+        // Check that the super-admin was not deleted.
+        $this->assertDatabaseHas('users', [
+            'uuid' => $superAdmin->uuid,
+        ]);
     }
 }

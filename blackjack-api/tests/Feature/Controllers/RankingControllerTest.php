@@ -4,7 +4,7 @@ namespace Tests\Feature\Controllers;
 
 use Tests\TestCase;
 
-class RankingController extends TestCase
+class RankingControllerTest extends TestCase
 {
     // FUNCTION TO TEST: ranking
     public function testRanking(): void

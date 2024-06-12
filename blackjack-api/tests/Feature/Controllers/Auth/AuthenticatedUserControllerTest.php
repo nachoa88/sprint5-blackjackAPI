@@ -4,7 +4,7 @@ namespace Tests\Feature\Controllers\Auth;
 
 use Tests\TestCase;
 
-class AuthenticatedUserController extends TestCase
+class AuthenticatedUserControllerTest extends TestCase
 {
     public function testSuccessfulLogin(): void
     {
