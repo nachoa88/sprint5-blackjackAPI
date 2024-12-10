@@ -6,7 +6,7 @@ use OpenApi\Annotations as OA;
 
 /**
  * @OA\Info(
- *     description="This is a simple Blackjack API. For more information, please visit the developer's portfolio at [Ignacio Albiol's Portfolio](https://ignacioalbiol.tech/).",
+ *     description="This is a simple Blackjack API. For more information, please visit the developer's portfolio at [Ignacio Albiol's Portfolio](https://ignacioalbiol.es/).",
  *     title="Blackjack API",
  *     version="1.0.0",
  * )

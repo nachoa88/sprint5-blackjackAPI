@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "Blackjack API",
-        "description": "This is a simple Blackjack API. For more information, please visit the developer's portfolio at [Ignacio Albiol's Portfolio](https://ignacioalbiol.tech/).",
+        "description": "This is a simple Blackjack API. For more information, please visit the developer's portfolio at [Ignacio Albiol's Portfolio](https://ignacioalbiol.es/).",
         "version": "1.0.0"
     },
     "servers": [
